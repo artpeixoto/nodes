@@ -1,6 +1,5 @@
 use heapless::Deque;
 
-use crate::common_types::rolling_deque::RollingDeque;
 use crate::extensions::used_in::UsedInTrait;
 
 pub enum Direction{
@@ -89,8 +88,16 @@ impl<T, const history_size: usize> SampleHistory<T, history_size>{
         self.internal_get(u_index)
     }
 
-    fn internal_get(&self, index: usize) -> Option<SampleData<&T>>{
-        let sample = self.samples.get(index)?;
+    fn internal_get(&self, mut index: usize) -> Option<SampleData<&T>>{
+        let sample = {
+            let slices = self.samples.as_slices();
+            if index < slices.0.len() {
+                Some(unsafe{slices.0.get_unchecked(index)})
+            } else {
+                slices.1.get(index)
+            }
+        }?;
+
         let sample_full_index = FullIndex(self.get_first_full_index().0 + index);
 
         Some( SampleData {
@@ -99,10 +106,8 @@ impl<T, const history_size: usize> SampleHistory<T, history_size>{
         })
     }
 
-
-
     pub fn push_sample(&mut self, sample: T) {
-        self.samples.push_roll_forward(sample);
+        self.samples.push_front(sample);
         self.full_len += 1;
     }
 }

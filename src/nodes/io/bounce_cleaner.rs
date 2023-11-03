@@ -3,14 +3,16 @@ use crate::nodes::base::process_errors::NodeBorrowError;
 use crate::nodes::sampling::sample_history::{Direction, SampleHistory};
 use crate::nodes::base::SimpleProcess;
 
-pub struct BounceCleaner<'a> {
-	samples: 		 NodeRef<'a, SampleHistory<DigitalValue>>,
+pub struct BounceCleaner<'a, const msg_queue_size: usize> {
+	samples: 		 NodeRef<'a, SampleHistory<DigitalValue, msg_queue_size>>,
 	output:  		 NodeRef<'a, DigitalValue>,
 	last_sample: 	 usize, 
 }
 
 
-impl SimpleProcess for BounceCleaner<'_>{
+impl<const msg_queue_size: usize>
+	SimpleProcess for BounceCleaner<'_, msg_queue_size>
+{
     fn next(&mut self) -> Result<(), NodeBorrowError> {
 		let samples_ref = self.samples.try_borrow()?;
 
@@ -19,7 +21,7 @@ impl SimpleProcess for BounceCleaner<'_>{
 			.try_replace({
 				let high_samples_count: usize = 
 					samples_ref
-					.get_samples(Direction::Downcounting)
+					.get_samples(Direction::DownCounting)
 					.map(|s| match s.value{
                         DigitalValue::High => 1_usize,
                         DigitalValue::Low =>  0_usize,

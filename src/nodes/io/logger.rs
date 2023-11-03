@@ -1,22 +1,25 @@
-use core::{fmt::{Debug, Write}, error::Error};
-use alloc::{boxed::Box, collections::VecDeque, string::String};
-use heapless::HistoryBuffer;
-use crate::{common_types::timing::{Time, Duration}, nodes::base::time_keeper::CyclesKeeper};
+use alloc::string::String;
+use core::{fmt::{Debug, Write}};
+
+use crate::nodes::base::time_keeper::CyclesKeeper;
 use crate::nodes::base::process_errors::NodeBorrowError;
 use crate::nodes::base::SimpleProcess;
+use crate::nodes::sampling::sample_history::SampleHistory;
 use crate::nodes::sampling::sample_history::Direction;
 use crate::nodes::sampling::sample_history::FullIndex;
-use crate::nodes::sampling::sample_history::{SampleHistory};
 use crate::nodes::timing::clock::ClockNodeRef;
-use super::super::base::{NodeRef};
 
-pub struct LogWriter<'a, TWrite: Write>{
-	msg_queue: 		NodeRef<'a, SampleHistory<String>>,
+use super::super::base::NodeRef;
+
+pub struct LogWriter<'a, TWrite: Write, const msg_queue_size: usize>{
+	msg_queue: 		NodeRef<'a, SampleHistory<String, msg_queue_size>>,
 	last_written_index: FullIndex,
 	writer: 			TWrite,
 }
 
-impl<'a, TWrite: Write> SimpleProcess for LogWriter<'a, TWrite>{
+impl<'a, TWrite: Write, const msg_queue_size: usize>
+	SimpleProcess for LogWriter<'a, TWrite, msg_queue_size>
+{
     fn next(&mut self) -> Result<(), NodeBorrowError> {
 		let input_queue_last_index = 
 			self
@@ -32,7 +35,7 @@ impl<'a, TWrite: Write> SimpleProcess for LogWriter<'a, TWrite>{
     }
 }
 
-impl<TWrite: Write> LogWriter<'_, TWrite> {
+impl<TWrite: Write, const msg_queue_size: usize> LogWriter<'_, TWrite, msg_queue_size> {
 	pub fn try_write_all(&mut self){
 		let input_queue_ref = 
 			self.msg_queue
@@ -42,12 +45,13 @@ impl<TWrite: Write> LogWriter<'_, TWrite> {
 		let samples = { 
 				let all_samples = 
 					input_queue_ref
-					.get_samples(Direction::Upcounting);
+					.get_samples(Direction::UpCounting);
 
-				let upper_bound = all_samples.size_hint().1.unwrap();
+				let upper_bound = all_samples.len();
 
 				let is_end_iter = 
-					(0..(upper_bound - 1)).map(|_i| false)
+					(0..(upper_bound - 1))
+					.map(|_i| false)
 					.chain(core::iter::once(true));
 				
 				all_samples
@@ -70,23 +74,23 @@ impl<TWrite: Write> LogWriter<'_, TWrite> {
 	}
 }
 
-pub struct PeriodicLogger
-	<'a, TValue, TMsgMaker> 
+pub struct PeriodicLogger<'a, TValue, TMsgMaker, const msg_queue_size: usize>
 	where 
 		TMsgMaker: FnMut(&TValue) -> String 
 {
 	node			: NodeRef<'a, TValue>,
 	clock 			: ClockNodeRef<'a>,
-    msg_queue 	 	: NodeRef<'a, SampleHistory<String>>,
+    msg_queue 	 	: NodeRef<'a, SampleHistory<String, msg_queue_size>>,
 	msg_maker	 	: TMsgMaker,
 	cycles_keeper	: CyclesKeeper,
 }
 
-impl<'a, TValue, TMsgMaker: FnMut(&TValue) -> String> PeriodicLogger<'a, TValue, TMsgMaker>{
+impl<'a, TValue, TMsgMaker: FnMut(&TValue) -> String, const msg_queue_size: usize>
+	PeriodicLogger<'a, TValue, TMsgMaker, msg_queue_size>{
 	pub fn new(
 	 	node: 		NodeRef<'a, TValue>,
 	 	clock: 		ClockNodeRef<'a>,
-	 	msg_queue: 	NodeRef<'a, SampleHistory<String>>,
+	 	msg_queue: 	NodeRef<'a, SampleHistory<String, msg_queue_size>>,
 	 	msg_maker: 	TMsgMaker,
 	 	frequency:	f32,
 	) -> Self
@@ -106,8 +110,8 @@ impl<'a, TValue, TMsgMaker: FnMut(&TValue) -> String> PeriodicLogger<'a, TValue,
 	}
 }
 
-impl<'a, TValue, TMsgMaker>
-	SimpleProcess for PeriodicLogger<'a, TValue, TMsgMaker>
+impl<'a, TValue, TMsgMaker, const msg_queue_size: usize>
+	SimpleProcess for PeriodicLogger<'a, TValue, TMsgMaker, msg_queue_size>
 	where
 		TMsgMaker: FnMut(&TValue) -> String
 {
