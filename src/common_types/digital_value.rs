@@ -2,8 +2,6 @@
 pub enum DigitalValue {
 	High, Low
 }
-
-
 impl From<bool> for DigitalValue{
     fn from(value: bool) -> Self {
         match value{
@@ -11,7 +9,7 @@ impl From<bool> for DigitalValue{
             false => DigitalValue::Low,
         }
     }
-} 
+}
 
 impl Into<bool> for DigitalValue{
     fn into(self) -> bool {

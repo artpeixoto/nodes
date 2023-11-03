@@ -2,10 +2,13 @@ use core::{fmt::{Debug, Write}, error::Error};
 use alloc::{boxed::Box, collections::VecDeque, string::String};
 use heapless::HistoryBuffer;
 use crate::{common_types::timing::{Time, Duration}, nodes::base::time_keeper::CyclesKeeper};
+use crate::nodes::base::process_errors::NodeBorrowError;
+use crate::nodes::base::SimpleProcess;
 use crate::nodes::sampling::sample_history::Direction;
 use crate::nodes::sampling::sample_history::FullIndex;
 use crate::nodes::sampling::sample_history::{SampleHistory};
-use super::super::base::{NodeRef, TimedProcess};
+use crate::nodes::timing::clock::ClockNodeRef;
+use super::super::base::{NodeRef};
 
 pub struct LogWriter<'a, TWrite: Write>{
 	msg_queue: 		NodeRef<'a, SampleHistory<String>>,
@@ -13,8 +16,8 @@ pub struct LogWriter<'a, TWrite: Write>{
 	writer: 			TWrite,
 }
 
-impl<'a, TWrite: Write> TimedProcess for LogWriter<'a, TWrite>{
-    fn next(&mut self, current_time: &Time) -> Result<(), Box<dyn Error>> {
+impl<'a, TWrite: Write> SimpleProcess for LogWriter<'a, TWrite>{
+    fn next(&mut self) -> Result<(), NodeBorrowError> {
 		let input_queue_last_index = 
 			self
 			.msg_queue
@@ -67,25 +70,27 @@ impl<TWrite: Write> LogWriter<'_, TWrite> {
 	}
 }
 
-pub struct Logger
+pub struct PeriodicLogger
 	<'a, TValue, TMsgMaker> 
 	where 
 		TMsgMaker: FnMut(&TValue) -> String 
 {
 	node			: NodeRef<'a, TValue>,
-    msg_queue 	 	: NodeRef<'a, SampleHistory<String>>, 
+	clock 			: ClockNodeRef<'a>,
+    msg_queue 	 	: NodeRef<'a, SampleHistory<String>>,
 	msg_maker	 	: TMsgMaker,
 	cycles_keeper	: CyclesKeeper,
 }
 
-impl<'a, TValue, TMsgMaker: FnMut(&TValue) -> String> Logger<'a, TValue, TMsgMaker>{
+impl<'a, TValue, TMsgMaker: FnMut(&TValue) -> String> PeriodicLogger<'a, TValue, TMsgMaker>{
 	pub fn new(
-			node: 		NodeRef<'a, TValue>,
-			msg_queue: 	NodeRef<'a, SampleHistory<String>>,
-			msg_maker: 	TMsgMaker,
-			frequency:	f32,
-		) -> Self {
-
+	 	node: 		NodeRef<'a, TValue>,
+	 	clock: 		ClockNodeRef<'a>,
+	 	msg_queue: 	NodeRef<'a, SampleHistory<String>>,
+	 	msg_maker: 	TMsgMaker,
+	 	frequency:	f32,
+	) -> Self
+	{
 		let cycles_keeper = {
 			let cycles_duration = (1_000_000_f32 / frequency) as u64;
 			CyclesKeeper::new(cycles_duration)
@@ -93,6 +98,7 @@ impl<'a, TValue, TMsgMaker: FnMut(&TValue) -> String> Logger<'a, TValue, TMsgMak
 
 		Self {
 			node,
+			clock,
 			msg_queue,
 			msg_maker,	
 			cycles_keeper,
@@ -101,13 +107,15 @@ impl<'a, TValue, TMsgMaker: FnMut(&TValue) -> String> Logger<'a, TValue, TMsgMak
 }
 
 impl<'a, TValue, TMsgMaker>
-	TimedProcess 
-	for 	Logger<'a, TValue, TMsgMaker> 
-	where 	TMsgMaker: FnMut(&TValue) -> String 
-	{
-    fn next(&mut self, current_time: &Time) -> Result<(), Box<dyn Error>> {
+	SimpleProcess for PeriodicLogger<'a, TValue, TMsgMaker>
+	where
+		TMsgMaker: FnMut(&TValue) -> String
+{
+    fn next(&mut self) -> Result<(), NodeBorrowError> {
+		let clock_reading = self.clock.try_borrow()?;
+
 		let should_log = 
-			self.cycles_keeper.get_cycles_and_update(current_time) > 0;
+			self.cycles_keeper.get_cycles_and_update(&clock_reading.current_time) > 0;
 
         if should_log { 
 			let value_ref 			= self.node.try_borrow()?;

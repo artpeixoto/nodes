@@ -15,3 +15,4 @@ impl<T> SampleNodeRef<'_, T>{
         Ok(is_some)
     }
 }
+

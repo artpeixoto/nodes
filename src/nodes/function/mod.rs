@@ -1,3 +1,4 @@
-pub mod func;
-pub mod signal_gen;
-pub use func::*;
+pub mod signal_gen_funcs;
+pub mod procs;
+pub use procs::*;
+

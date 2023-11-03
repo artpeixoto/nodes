@@ -29,7 +29,7 @@ impl<T> Debug for ReplaceErr<T>{
 
 impl<T> Display for ReplaceErr<T>{
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct("ReplaceErr").field("msg", &self.msg).finish()
+        <Self as Debug>::fmt(self, f)
     }
 }
 

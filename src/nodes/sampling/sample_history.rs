@@ -1,29 +1,32 @@
-use alloc::collections::VecDeque;
-pub enum Direction{
-    Downcounting,
-    Upcounting,
-}
+use heapless::Deque;
 
 use crate::common_types::rolling_deque::RollingDeque;
+use crate::extensions::used_in::UsedInTrait;
+
+pub enum Direction{
+    DownCounting,
+    UpCounting,
+}
 
 #[derive(Clone, Copy, PartialEq, PartialOrd)]
 pub struct FullIndex(pub usize);
+
 
 pub struct SampleData<T>{
     pub index:  FullIndex,	
     pub value:  T,
 }
 
-pub struct SampleHistory<T>{
-    samples:          VecDeque<T>,
+pub struct SampleHistory<T, const history_size: usize>{
+    samples:          Deque<T, history_size>,
     full_len:         usize,
 }
 
-impl<T> SampleHistory<T>{
-    pub fn new(capacity: usize) -> Self{
+impl<T, const history_size: usize> SampleHistory<T, history_size>{
+    pub fn new() -> Self {
         SampleHistory { 
-            samples: VecDeque::with_capacity(capacity),
-            full_len: 0 
+            samples:    Deque::new(),
+            full_len:   0,
         }            
     }
 
@@ -36,21 +39,23 @@ impl<T> SampleHistory<T>{
     pub fn get_last_full_index(&self) -> FullIndex{
         FullIndex(self.full_len - 1)
     }
+    pub fn get_samples<'a>(&'a self, dir: Direction) -> impl ExactSizeIterator<Item =
+    SampleData<&'a T>> + 'a
+    {
+        let mut generator = ({
+            let (mut current, step) = match dir {
+                Direction::DownCounting => { (0, 1) }
+                Direction::UpCounting => { (-1, -1) }
+            };
 
-    pub fn get_samples(&self, dir: Direction) -> impl ExactSizeIterator<Item = SampleData<&T>>  {
-        (1..self.len())
-        .map({
-            let rev = self.len() - 1;
-            move |i| {
-                match dir{
-                    Direction::Downcounting => rev - i ,
-                    Direction::Upcounting => i 
-                }
+            move || {
+                let res = unsafe { self.get(current).unwrap_unchecked() };
+                current += step;
+                res
             }
-        })
-        .map(|i| unsafe{
-            self.get(i).unwrap_unchecked()
-        })
+        });
+
+        (0..self.len()).map(move |_i| generator())
     }
 
     #[inline]
@@ -64,26 +69,27 @@ impl<T> SampleHistory<T>{
     }
 
     #[inline]
-    pub fn len(&self) -> usize {
+    pub const fn len(&self) -> usize {
         self.samples.len()
     }
 
-    pub fn get_rev(&self, index: usize) -> Option<SampleData<&T>>{
-        let rev_index = {
-            let last_index = self.samples.len() - 1;
-            last_index.checked_sub(index)
+    pub fn get(&self, index: isize) -> Option<SampleData<&T>>{
+        let u_index = {
+            let len = self.len() as isize;
+            if index >= -len && index < len {
+                (if index > 0 { index } else { len - index })
+                .used_in(usize::try_from)
+                .unwrap()
+                .used_in(Some)
+            } else {
+                None
+            }
         }?;
-        
-        let sample_data = self.samples.get(rev_index)?;
-        
-        Some( SampleData{
-            index: FullIndex((self.full_len - 1) - rev_index),
-            value: sample_data
-        } )
+
+        self.internal_get(u_index)
     }
 
-
-    pub fn get(&self, index: usize) -> Option<SampleData<&T>>{
+    fn internal_get(&self, index: usize) -> Option<SampleData<&T>>{
         let sample = self.samples.get(index)?;
         let sample_full_index = FullIndex(self.get_first_full_index().0 + index);
 
@@ -92,6 +98,8 @@ impl<T> SampleHistory<T>{
             value: sample
         })
     }
+
+
 
     pub fn push_sample(&mut self, sample: T) {
         self.samples.push_roll_forward(sample);

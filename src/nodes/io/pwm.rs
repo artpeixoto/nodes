@@ -1,82 +1,99 @@
-use core::{ops::{Deref, Div}, error::Error};
+use alloc::borrow::ToOwned;
+use core::{ops::{ Div}, error::Error};
 
 use alloc::boxed::Box;
+use core::cmp::Ordering;
+use core::ops::Deref;
 
-use crate::{nodes::base::{NodeRef, TimedProcess}, common_types::timing::{Duration, Time}, common_types::digital_value::DigitalValue, extensions::replace_with::TryReplace};
+use crate::{nodes::base::{NodeRef}, common_types::timing::{Duration, Time}, common_types::digital_value::DigitalValue, extensions::replace_with::TryReplace};
+use crate::nodes::base::process_errors::NodeBorrowError;
+use crate::nodes::base::SimpleProcess;
+use crate::nodes::base::time_keeper::CyclesKeeper;
+use crate::nodes::timing::clock::ClockNodeRef;
 
 
 pub struct PwmGenerator<'a, TInput> 
     where 
-		TInput: Div<TInput> + PartialEq<TInput> ,
-		<TInput as Div>::Output: Into<f32>
-	{
+		TInput: PartialEq<TInput> + Clone + Into<f32>,
+{
     pub input:  		NodeRef<'a, TInput>,
-	pub output: 		NodeRef<'a, DigitalValue>,
-    pub cycle_duration: Duration,
+	last_input_cache: 	Option<(TInput, Duration)>,
 
-    input_max: 		TInput,
-	last_input_cache: Option<(TInput, Duration)>
+	pub clock: 			ClockNodeRef<'a>,
+	cycles_keeper: 		CyclesKeeper,
+
+	pub output: 		NodeRef<'a, DigitalValue>,
 }
 
 impl<'a, TInput> PwmGenerator<'a, TInput>
 	where
-		TInput: Div<TInput> + PartialEq<TInput>,
-		<TInput as Div>::Output: 	Into<f32>
-	{
+		TInput: PartialEq<TInput> + Clone + Into<f32>,
+{
+	fn get_duration<'b>(mut last_input_cache: &'b mut Option<(TInput, Duration)>, input: &'b TInput, cycle_duration: &'b Duration) -> &'b Duration {
+		let cache_is_valid=
+			last_input_cache.as_ref()
+			.is_some_and(|(cached_input, dur)|{
+				cached_input.eq(input)
+			});
+
+		if !cache_is_valid{
+			let new_cache = {
+				let new_duration = (cycle_duration.clone() as f32 * <TInput as Into<f32>>::into(input.clone())) as u64;
+				let new_input = input.clone();
+				(new_input, new_duration)
+			};
+			last_input_cache.replace(new_cache);
+		}
+
+		&last_input_cache.as_ref().unwrap().1
+	}
 	pub fn new(
 		input: NodeRef<'a, TInput>,
-		output: NodeRef<'a, DigitalValue>, 
-		input_max: TInput,
-		frequency: f32
-	) -> Self {
-		let cycle_duration = (1_000_000_f32 / frequency) as Duration;
-		Self { 
+		clock: ClockNodeRef<'a>,
+		output: NodeRef<'a, DigitalValue>,
+		frequency: f32,
+	) -> Self
+	{
+		let cycles_keeper = {
+			let cycle_duration = (1_000_000_f32 / frequency) as Duration;
+			CyclesKeeper::new(cycle_duration)
+		};
+		Self {
 			input, 
-			output, 
-			cycle_duration,  
-            input_max,
+			output,
+			clock,
+			cycles_keeper,
 			last_input_cache: None,
-		}			
+		}
 	}
 }
 
 
-impl<TInput> TimedProcess for PwmGenerator<'_, TInput>
+impl<TInput> SimpleProcess for PwmGenerator<'_, TInput>
 	where
-		TInput: Div<TInput> + PartialEq<TInput> + Clone,
-		<TInput as Div>::Output: Into<f32>
-	{
+		TInput:PartialEq<TInput> + Clone + Into<f32>,
+{
+    fn next(&mut self) -> Result<(), NodeBorrowError> {
+        let current_input 		 = 		self.input.try_borrow()?;
+		let clock_reading = self.clock.try_borrow()?;
+		let mut output = self.output.try_borrow_mut()?;
 
-    fn next(&mut self, time: &Time) -> Result<(), Box<dyn Error>> {
-        let current_input = self.input.try_borrow().unwrap().deref().clone();  
-		let calculated_duration =
-		 	match &self.last_input_cache {
-                Some((old_input, old_calculated_duration)) => {
-                    if old_input == &current_input {
-                        Some(old_calculated_duration.clone())
-                    } else {
-                        None
-                    }								
-                },
-                None =>  None,
-            } 
-            .unwrap_or_else(||{
-                let ratio : f32 = 	(current_input.clone() / self.input_max.clone()).into() ;
-				let calculated_duration = 	(ratio * (self.cycle_duration as f32))  as u64;
-                self.last_input_cache = Some((current_input.clone(), calculated_duration));
-                calculated_duration
-				}
-            );
-        
-		let mod_time = time % self.cycle_duration;
+		let current_cycle_dur = {
+			let current_time = &clock_reading.current_time;
+			self.cycles_keeper.get_cycles_and_update(current_time);
+			let cycle_start = self.cycles_keeper.get_current_cycle_start_time();
 
-		let (current_value, _wait_time) = if mod_time <= calculated_duration {
-			(DigitalValue::High, calculated_duration - mod_time)
-		} else {
-			(DigitalValue::Low, self.cycle_duration - mod_time)
+			current_time - cycle_start
 		};
 
-        self.output.try_replace(current_value).unwrap();
+		let input_calculate_dur =
+			PwmGenerator::get_duration(&mut self.last_input_cache, current_input.deref(), self.cycles_keeper.get_current_cycle_start_time() );
+
+
+		match current_cycle_dur.cmp(&input_calculate_dur) {
+			Ordering::Less | Ordering::Equal 	=> {*output = DigitalValue::High}
+			Ordering::Greater 					=> {*output = DigitalValue::Low }
+		}
 
 		Ok(())
     }

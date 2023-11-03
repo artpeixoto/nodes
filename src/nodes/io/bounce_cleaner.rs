@@ -1,9 +1,7 @@
-use core::error::Error;
-use alloc::boxed::Box;
-
-use crate::{nodes::{base::{NodeRef, TimedProcess}}, common_types::digital_value::DigitalValue, extensions::replace_with::TryReplace};
+use crate::{nodes::{base::{NodeRef}}, common_types::digital_value::DigitalValue, extensions::replace_with::TryReplace};
+use crate::nodes::base::process_errors::NodeBorrowError;
 use crate::nodes::sampling::sample_history::{Direction, SampleHistory};
-use crate::common_types::timing;
+use crate::nodes::base::SimpleProcess;
 
 pub struct BounceCleaner<'a> {
 	samples: 		 NodeRef<'a, SampleHistory<DigitalValue>>,
@@ -12,8 +10,8 @@ pub struct BounceCleaner<'a> {
 }
 
 
-impl TimedProcess for BounceCleaner<'_>{
-    fn next(&mut self, _current_time: &timing::Time) -> Result<(), Box<dyn Error>> {
+impl SimpleProcess for BounceCleaner<'_>{
+    fn next(&mut self) -> Result<(), NodeBorrowError> {
 		let samples_ref = self.samples.try_borrow()?;
 
         if samples_ref.full_len() > self.last_sample{
@@ -28,7 +26,7 @@ impl TimedProcess for BounceCleaner<'_>{
 					})
 					.sum();
 
-                (high_samples_count >= (samples_ref.capacity()) / 2).into() 
+                (high_samples_count >= (samples_ref.capacity()) / 2).into()
 			})
 			.unwrap();
 
