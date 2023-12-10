@@ -1,0 +1,5 @@
+[package]
+name = "nodes_base_nodes"
+version = "0.1.0"
+edition = "2021"
+

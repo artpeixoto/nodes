@@ -1,0 +1,8 @@
+[toolchain]
+channel="nightly"
+
+[unstable]
+build-std = ["core", "alloc"]
+
+[test]
+target="x86_64-pc-windows-msvc"

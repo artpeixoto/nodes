@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CargoProjects">
+    <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f5af4512-2346-4267-ab22-49f2842321c5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes/src/base/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes/src/nodes/queue/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes/src/nodes/queue/queue_node.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base_nodes/.cargo/config.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base_nodes/Cargo.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base_nodes/src/lib.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_deps/Cargo.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_deps/src/lib.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/.cargo/config.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/base.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/input.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/test.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/build/heapless-08ad0ef325c47b73/out/probe.probe.5f2aff675d1ef883-cgu.0.rcgu.o" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/build/heapless-08ad0ef325c47b73/out/probe.probe.b5551b8efaef2f74-cgu.0.rcgu.o" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/build/heapless-08ad0ef325c47b73/out/probe.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.cargo/config.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/nodes.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/nodes.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common_types/cat_types.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common_types/digital_value.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common_types/interleaver.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common_types/mod.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common_types/rolling_deque.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common_types/timing.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/extensions/mod.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/extensions/replace_with.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/extensions/try_as_ref.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/extensions/used_in.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/base/mod.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/base/node.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/base/proc.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/base/time_keeper.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/data_proc/difference_detection.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/data_proc/mod.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/function/mod.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/function/procs/fn_procs.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/function/procs/mod.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/function/procs/pure_fn_procs.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/function/signal_gen_funcs.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/io/bounce_cleaner.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/io/logger.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/io/mod.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/io/pwm.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/io/serial/line_separator.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/io/serial/mod.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/io/serial/reader.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/io/serial/writer.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/mod.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/sampling/mod.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/sampling/periodic_sampler.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/sampling/sample_history.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/sampling/sample_history_saver.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/sampling/sample_latcher.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/sampling/sample_node.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/sampling/sample_timer.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/stepper/base.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/stepper/mod.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/stepper/speed_controller.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/timing/clock.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nodes/timing/mod.rs" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Rust File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$USER_HOME$/.cargo/registry/src/index.crates.io-6f17d22bba15001f/syn-2.0.39/src/expr.rs" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/.cargo/registry/src/index.crates.io-6f17d22bba15001f/syn-2.0.39/src/punctuated.rs" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/.cargo/registry/src/index.crates.io-6f17d22bba15001f/syn-2.0.39/src/ty.rs" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/.rustup/toolchains/nightly-x86_64-pc-windows-msvc/lib/rustlib/src/rust/library/core/src/iter/traits/iterator.rs" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/.rustup/toolchains/nightly-x86_64-pc-windows-msvc/lib/rustlib/src/rust/library/proc_macro/src/bridge/server.rs" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/.rustup/toolchains/nightly-x86_64-pc-windows-msvc/lib/rustlib/src/rust/library/proc_macro/src/bridge/symbol.rs" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/.rustup/toolchains/nightly-x86_64-pc-windows-msvc/lib/rustlib/src/rust/library/proc_macro/src/lib.rs" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="pc47yjwm" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2YfgqM5hK18iyfrrNScmUe81ZKr" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Cargo.Expand nodes_base_runner_macro::input.executor": "Run",
+    "Cargo.Test build_runner::test_builder (1).executor": "Debug",
+    "Cargo.Test build_runner::test_builder (2).executor": "Debug",
+    "Cargo.Test build_runner::test_builder (3).executor": "Run",
+    "Cargo.Test build_runner::test_builder.executor": "Debug",
+    "Cargo.Test build_runner::test_stuff.executor": "Run",
+    "Cargo.Test output::test_builder.executor": "Run",
+    "Cargo.Test test::test_builder (1).executor": "Run",
+    "Cargo.Test test::test_builder.executor": "Run",
+    "Cargo.Test test_builder.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "D:/Users/Public/projetos/RustProjects/embedded_crates/nodes/nodes_base_nodes",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.hideNoCargoProjectNotificationsD:/Users/Public/projetos/RustProjects/embedded_crates/nodes/nodes_base_builder/nodes_base_builder_macro/Cargo.toml": "true",
+    "settings.editor.selected.configurable": "language.rust.cargo.check",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Users\Public\projetos\RustProjects\embedded_crates\nodes\nodes_base_nodes" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Users\Public\projetos\RustProjects\embedded_crates\nodes" />
+      <recent name="D:\Users\Public\projetos\RustProjects\embedded_crates\nodes\nodes_base_builder" />
+      <recent name="D:\Users\Public\projetos\RustProjects\embedded_crates\nodes\nodes\src\nodes\queue" />
+      <recent name="D:\Users\Public\projetos\RustProjects\embedded_crates\nodes\nodes_base_nodes\src" />
+    </key>
+  </component>
+  <component name="RsExternalLinterProjectSettings">
+    <option name="channel" value="nightly" />
+    <option name="runOnTheFly" value="true" />
+  </component>
+  <component name="RunManager" selected="Cargo.Expand nodes_base_runner_macro::input">
+    <configuration name="Expand nodes_base_runner_macro::input" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="expand --lib --color=always --theme=Dracula --tests input" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro" />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test build_runner::test_builder (3)" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package nodes_base_builder --lib build_runner::test_builder -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test output::test_builder" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package nodes_base_builder --lib output::test_builder -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test test::test_builder (1)" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package nodes_base_runner_macro --lib test::test_builder -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test test::test_builder" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package nodes_base_runner_macro --lib test::test_builder -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="FULL" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Cargo.Expand nodes_base_runner_macro::input" />
+      <item itemvalue="Cargo.Test test::test_builder" />
+      <item itemvalue="Cargo.Test test::test_builder (1)" />
+      <item itemvalue="Cargo.Test build_runner::test_builder (3)" />
+      <item itemvalue="Cargo.Test output::test_builder" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Cargo.Expand nodes_base_runner_macro::input" />
+        <item itemvalue="Cargo.Test test::test_builder (1)" />
+        <item itemvalue="Cargo.Test test::test_builder" />
+        <item itemvalue="Cargo.Test output::test_builder" />
+        <item itemvalue="Cargo.Test build_runner::test_builder (3)" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="RustProjectSettings">
+    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f5af4512-2346-4267-ab22-49f2842321c5" name="Changes" comment="" />
+      <created>1700922238663</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1700922238663</updated>
+      <workItem from="1700922240091" duration="377000" />
+      <workItem from="1701081457040" duration="51053000" />
+      <workItem from="1701279880899" duration="13752000" />
+      <workItem from="1701714810441" duration="23527000" />
+      <workItem from="1701808239164" duration="22071000" />
+      <workItem from="1701985271631" duration="3690000" />
+      <workItem from="1702057738724" duration="5187000" />
+      <workItem from="1702135508397" duration="2799000" />
+      <workItem from="1702215337176" duration="83000" />
+      <workItem from="1702216356825" duration="7000" />
+      <workItem from="1702216651462" duration="19644000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>106</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>367</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>489</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>612</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>200</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>318</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>94</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>37</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>45</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>317</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

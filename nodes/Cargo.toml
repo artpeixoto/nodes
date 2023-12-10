@@ -1,0 +1,23 @@
+cargo-features=["edition2024"]
+
+[package]
+name = "nodes"
+version = "0.1.0"
+edition = "2024"
+
+
+[lib]
+crate-type = ["lib"]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[dependencies]
+nodes_base_runner_macro = { path= "../nodes_base_runner/nodes_base_runner_macro" }
+nodes_base_runner_deps =  { path= "../nodes_base_runner/nodes_base_runner_deps" }
+nodes_base_nodes = { path="../nodes_base_nodes" }
+anyhow = { version = "1.0.75", default-features = false }
+either = { default-features = false, version = "1.9.0", features = [] }
+embedded-hal = { version = "0.2.7" }
+embedded-io = { version = "0.6.1", features = ["alloc"] }
+heapless = "0.8.0"
+nb = "1.1.0"
