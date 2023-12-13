@@ -1,2 +1,2 @@
-pub(crate) type NodeIndex = String;
-pub(crate) type ProcIndex = usize;
+pub type NodeIndex = String;
+pub type ProcIndex = usize;

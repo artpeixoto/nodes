@@ -16,7 +16,7 @@ fn test_builder(){
 
     let procs_input = quote!(
         {
-            count_cycles((), mut int_node),
+            count_cycles(mut int_node)!,
             make_log_msg(int_node, mut string_node),
             write_log(string_node),
         }

@@ -1,12 +1,11 @@
+#![feature(coroutine_trait)]
 #![no_std]
-#![feature(coroutines, coroutine_trait )]
 pub mod build_runner_deps{
-
     pub mod proc{
-        use core::ops::Coroutine;
-        pub trait Process<TArg>: Coroutine<TArg, Yield=(), Return=()> {}
 
     }
+    use core::ops::Coroutine;
+    use core::pin::Pin;
 
     pub mod opens {
         pub trait OpensMut<TKey>: OpensRef<TKey> {

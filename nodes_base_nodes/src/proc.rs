@@ -1,15 +1,12 @@
 use core::{error::Error};
 use core::cell::{BorrowError, BorrowMutError};
+use core::ops::Coroutine;
 use crate::extensions::used_in::UsedInTrait;
 use crate::process_errors::NodeBorrowError;
 
 
-pub trait Process{
-
-	type NextOutput<'output>;
-	type NextInput<'input>;
-	fn next<'input, 'output>(&mut self, input: Self::NextInput<'input>)
-        -> Self::NextOutput<'output>;
+pub trait Process: Coroutine<Self::TArgs, Yield=(), Return=()>{
+    type TArgs;
 }
 
 
@@ -58,20 +55,3 @@ pub mod process_errors{
         }
     }
 }
-
-pub trait SimpleProcess{
-    type TError: Error = NodeBorrowError;
-    fn next(&mut self) -> Result<(), Self::TError>;
-}
-
-impl<TSelf> Process for TSelf
-    where TSelf: SimpleProcess
-{
-    type NextOutput<'output> = Result<(), <Self as SimpleProcess>::TError>;
-    type NextInput<'input>   = ();
-
-    fn next<'input, 'output>(&mut self, input: Self::NextInput<'input>) -> Self::NextOutput<'output> {
-        SimpleProcess::next(self)
-    }
-}
-

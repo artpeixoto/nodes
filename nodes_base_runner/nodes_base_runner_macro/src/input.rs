@@ -1,11 +1,13 @@
+use proc_macro::Delimiter::Parenthesis;
 use std::cmp::Ordering;
 use std::collections::HashMap;
 use proc_macro2::Ident;
 use quote::ToTokens;
 use syn::{braced, Expr, parenthesized, parse2, Token, Type};
 use syn::Fields::Unit;
-use syn::parse::{Parse, ParseStream};
+use syn::parse::{Nothing, Parse, ParseStream};
 use syn::spanned::Spanned;
+use syn::token::Paren;
 use crate::base::NodeIndex;
 
 macro_rules! parse_kwargs  {
@@ -81,20 +83,22 @@ impl ProcArgMutability{
     }
 }
 
+#[derive(Clone, Debug)]
 pub(crate) enum SpecialProcArg{
     Unit
 }
 impl Parse for SpecialProcArg{
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        input.parse::<Token![()]>()?;
+        let parse_buffer;
+        parenthesized!(parse_buffer in input);
+        let _nothing = parse_buffer.parse::<Nothing>()?;
+        Ok(SpecialProcArg::Unit)
     }
 }
 
 
-pub(crate) enum ProcArg{
-    NodeProcArg(NodeProcArg),
-    SpecialProcArg
-}
+
+
 #[derive(Debug, Clone)]
 pub(crate) struct NodeProcArg {
     pub arg:        Ident,
@@ -123,12 +127,13 @@ impl Parse for NodeProcArg {
 
 
 #[derive(Debug, Clone)]
-pub(crate) struct Proc{
+pub(crate) struct ProcInput {
     pub func:       Box<Ident>,
     pub args:       Vec<NodeProcArg>,
+    pub is_starter:      bool,
 }
 
-impl Proc{
+impl ProcInput {
     fn get_args_names(&self) -> impl Iterator<Item = NodeIndex> + '_ {
         let selected_uses_exprs =
             self.args
@@ -140,7 +145,7 @@ impl Proc{
 
 
 
-impl Parse for Proc{
+impl Parse for ProcInput {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         println!("proc input is {:#?}", &input);
         let func  = Box::new(input.parse::<Ident>()?);
@@ -148,18 +153,27 @@ impl Parse for Proc{
         let args_parenthesized;
         parenthesized!(args_parenthesized in input);
 
-        let args_terminated = args_parenthesized.parse_terminated(NodeProcArg::parse, Token![,])?;
+        let args : Vec<_> =
+            args_parenthesized
+            .parse_terminated(NodeProcArg::parse, Token![,])?
+            .into_iter()
+            .collect();
 
-        let mut args: Vec<NodeProcArg> = args_terminated.into_iter().collect();
 
+        let starter = if input.peek(Token![!]){
+            input.parse::<Token![!]>().unwrap();
+            true
+        } else {
+            false
+        };
 
-        Ok( Self { func, args })
+        Ok( Self { func, args, is_starter: starter })
     }
 }
 
 #[derive(Debug, Clone)]
 pub(crate) struct ProcsInput {
-    pub procs: Vec<Proc>
+    pub procs: Vec<ProcInput>
 }
 
 impl Parse for ProcsInput{
@@ -173,7 +187,7 @@ impl Parse for ProcsInput{
 
         let procs =  {
             let procs = braced_input.parse_terminated(
-                Proc::parse,
+                ProcInput::parse,
                 Token![,]
             )?;
 
@@ -185,7 +199,7 @@ impl Parse for ProcsInput{
 
 #[derive(Debug, Clone)]
 pub(crate) struct NodesInput{
-    pub nodes_defs:    HashMap<String, NodeDefinition>
+    pub nodes_defs:    HashMap<String, NodeInput>
 }
 
 impl Parse for NodesInput{
@@ -193,14 +207,14 @@ impl Parse for NodesInput{
         let nodes_input;
         let _braces = braced!(nodes_input in input);
 
-        let mut reses : HashMap<String, NodeDefinition> = HashMap::new();
+        let mut reses : HashMap<String, NodeInput> = HashMap::new();
         let parse_term =
-        nodes_input
-        .parse_terminated(
-            NodeDefinition::parse,
-            Token![,],
-        )?
-        .into_iter();
+            nodes_input
+            .parse_terminated(
+                NodeInput::parse,
+                Token![,],
+            )?
+            .into_iter();
 
         for node_defn in parse_term{
             let node_name = (&node_defn).node_name.to_string();
@@ -217,13 +231,13 @@ impl Parse for NodesInput{
 }
 
 #[derive(Debug, Clone)]
-pub(crate) struct NodeDefinition{
+pub(crate) struct NodeInput {
     pub node_name:      Ident,
     pub node_type:      Type,
     pub node_value:     Expr,
 }
 
-impl Parse for NodeDefinition{
+impl Parse for NodeInput {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let node_name = input.parse::<Ident>()?;
         let _type_sep_token = input.parse::<Token![:]>()?;
@@ -231,7 +245,7 @@ impl Parse for NodeDefinition{
         let _val_sep_token  = input.parse::<Token![=]>()?;
         let node_value = input.parse::<Expr>()?;
 
-        Ok(NodeDefinition{
+        Ok(NodeInput {
             node_name,
             node_type,
             node_value,

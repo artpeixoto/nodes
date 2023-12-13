@@ -1,8 +1,12 @@
 #![feature(proc_macro_quote)]
+#![feature(adt_const_params)]
+#![feature(coroutine_trait)]
+
 mod output;
 mod input;
 mod test;
 mod base;
+mod analysis;
 
 use proc_macro;
 use syn::parse2;

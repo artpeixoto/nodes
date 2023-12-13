@@ -106,6 +106,7 @@ dependencies = [
 name = "nodes_base_runner_macro"
 version = "0.1.0"
 dependencies = [
+ "heapless",
  "log",
  "nodes_base_nodes",
  "proc-macro2",
