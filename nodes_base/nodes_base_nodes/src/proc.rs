@@ -1,14 +1,15 @@
 use core::{error::Error};
 use core::cell::{BorrowError, BorrowMutError};
 use core::ops::Coroutine;
+use core::pin::Pin;
 use crate::extensions::used_in::UsedInTrait;
 use crate::process_errors::NodeBorrowError;
 
 
-pub trait Process: Coroutine<Self::TArgs, Yield=(), Return=()>{
-    type TArgs;
+pub trait Process{
+    type TArgs<'a>;
+    fn resume<'a>(&mut self, args: Self::TArgs<'a>);
 }
-
 
 pub mod process_errors{
     use core::cell::{BorrowError, BorrowMutError};

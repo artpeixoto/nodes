@@ -3,10 +3,12 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/nodes/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/nodes_base_nodes/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/nodes_base_builder_deps/nodes_base_builder_deps/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/nodes_base_runner/nodes_base_runner_deps/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/nodes_base_runner/nodes_base_runner_macro/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/nodes_base/nodes_base_nodes/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_deps/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/nodes_base/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/nodes_base/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

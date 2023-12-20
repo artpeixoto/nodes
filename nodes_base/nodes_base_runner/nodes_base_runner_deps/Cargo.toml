@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 heapless = "0.8.0"
+nodes_base_nodes = {path= "../../nodes_base_nodes" }

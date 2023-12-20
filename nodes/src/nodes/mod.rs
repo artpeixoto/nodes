@@ -5,3 +5,4 @@ pub mod data_proc;
 pub mod timing;
 pub mod sampling;
 pub mod queue;
+pub mod signals;

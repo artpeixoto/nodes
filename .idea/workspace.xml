@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="ANALYZE_INJECTED_CODE" value="false" />
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
@@ -8,18 +11,63 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f5af4512-2346-4267-ab22-49f2842321c5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/analysis.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes/src/nodes/signals/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes/src/nodes/timing/cycles_counter.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes/src/nodes/timing/periodic.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base/Cargo.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/.cargo/config.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base/src/lib.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodes_base/tests/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/nodes.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/nodes.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nodes_base_nodes/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base_nodes/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nodes_base_nodes/src/proc.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base_nodes/src/proc.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_deps/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_deps/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/base.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/base.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/input.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/input.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/test.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/test.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/base/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/base/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/common_types/timing.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/common_types/timing.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/data_proc/difference_detection.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/data_proc/difference_detection.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/function/procs/fn_procs.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/function/procs/fn_procs.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/function/procs/pure_fn_procs.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/function/procs/pure_fn_procs.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/function/signal_gen_funcs.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/function/signal_gen_funcs.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/io/bounce_cleaner.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/io/bounce_cleaner.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/io/logger.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/io/logger.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/io/pwm.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/io/pwm.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/io/serial/line_separator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/io/serial/line_separator.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/io/serial/reader.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/io/serial/reader.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/io/serial/writer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/io/serial/writer.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/queue/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/queue/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/queue/queue_node.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/queue/queue_node.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/queue/request.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/queue/request.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/sampling/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/sampling/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/sampling/periodic_sampler.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/sampling/sampler.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/sampling/sample_history.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/sampling/sample_history.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/sampling/sample_history_saver.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/sampling/sample_history_saver.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/sampling/sample_latcher.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/sampling/sample_latcher.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/sampling/sample_node.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/sampling/sample_node.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/sampling/sample_timer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/sampling/sample_timer.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/timing/clock.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/timing/clock.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes/src/nodes/timing/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/timing/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_nodes/.cargo/config.toml" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_nodes/.cargo/config.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_nodes/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_nodes/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_nodes/src/extensions/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_nodes/src/extensions/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_nodes/src/extensions/replace_with.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_nodes/src/extensions/replace_with.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_nodes/src/extensions/try_as_ref.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_nodes/src/extensions/try_as_ref.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_nodes/src/extensions/used_in.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_nodes/src/extensions/used_in.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_nodes/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_nodes/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_nodes/src/node.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_nodes/src/node.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_nodes/src/proc.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_nodes/src/proc.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_deps/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_deps/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_deps/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_deps/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/.cargo/config.toml" beforeDir="false" afterPath="$PROJECT_DIR$/nodes/src/nodes/signals/activation_signal.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/analysis.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/base.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/base.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/input.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/input.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/output.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/test.rs" beforeDir="false" afterPath="$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/test.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +88,7 @@
     <setting file="file://$USER_HOME$/.cargo/registry/src/index.crates.io-6f17d22bba15001f/syn-2.0.39/src/expr.rs" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/.cargo/registry/src/index.crates.io-6f17d22bba15001f/syn-2.0.39/src/punctuated.rs" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/.cargo/registry/src/index.crates.io-6f17d22bba15001f/syn-2.0.39/src/ty.rs" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/.rustup/toolchains/nightly-x86_64-pc-windows-msvc/lib/rustlib/src/rust/library/core/src/clone.rs" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/.rustup/toolchains/nightly-x86_64-pc-windows-msvc/lib/rustlib/src/rust/library/core/src/iter/traits/iterator.rs" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/.rustup/toolchains/nightly-x86_64-pc-windows-msvc/lib/rustlib/src/rust/library/core/src/ops/coroutine.rs" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/.rustup/toolchains/nightly-x86_64-pc-windows-msvc/lib/rustlib/src/rust/library/proc_macro/src/bridge/server.rs" root0="SKIP_INSPECTION" />
@@ -53,7 +102,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -68,51 +117,56 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;Cargo.Expand nodes_base_runner_macro::input.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test build_runner::test_builder (1).executor&quot;: &quot;Debug&quot;,
-    &quot;Cargo.Test build_runner::test_builder (2).executor&quot;: &quot;Debug&quot;,
-    &quot;Cargo.Test build_runner::test_builder (3).executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test build_runner::test_builder.executor&quot;: &quot;Debug&quot;,
-    &quot;Cargo.Test build_runner::test_stuff.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test output::test_builder.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test test::test_builder (1).executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test test::test_builder.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test test_builder.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Users/Public/projetos/RustProjects/embedded_crates/nodes/nodes_base_nodes&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
-    &quot;org.rust.hideNoCargoProjectNotificationsD:/Users/Public/projetos/RustProjects/embedded_crates/nodes/nodes_base_builder/nodes_base_builder_macro/Cargo.toml&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;language.rust.cargo.check&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Cargo.Build `Test simple_test::test`.executor": "Run",
+    "Cargo.Expand nodes_base_runner_macro::input.executor": "Run",
+    "Cargo.Test build_runner::test_builder (1).executor": "Debug",
+    "Cargo.Test build_runner::test_builder (2).executor": "Debug",
+    "Cargo.Test build_runner::test_builder (3).executor": "Run",
+    "Cargo.Test build_runner::test_builder.executor": "Debug",
+    "Cargo.Test build_runner::test_stuff.executor": "Run",
+    "Cargo.Test output::test_builder.executor": "Run",
+    "Cargo.Test simple_test.executor": "Run",
+    "Cargo.Test simple_test::test.executor": "Run",
+    "Cargo.Test simple_test::test_res.executor": "Run",
+    "Cargo.Test test::test_builder (1).executor": "Run",
+    "Cargo.Test test::test_builder.executor": "Run",
+    "Cargo.Test test_builder.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "D:/Users/Public/projetos/RustProjects/embedded_crates/nodes/nodes_base_nodes",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.disableDetachedFileInspectionD:/Users/Public/projetos/RustProjects/embedded_crates/nodes/nodes_base/tests/mod.rs": "true",
+    "org.rust.hideNoCargoProjectNotificationsD:/Users/Public/projetos/RustProjects/embedded_crates/nodes/nodes_base_builder/nodes_base_builder_macro/Cargo.toml": "true",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "language.rust.cargo.check",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Users\Public\projetos\RustProjects\embedded_crates\nodes\nodes_base_nodes" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Users\Public\projetos\RustProjects\embedded_crates\nodes\nodes_base" />
       <recent name="D:\Users\Public\projetos\RustProjects\embedded_crates\nodes\nodes_base_runner\nodes_base_runner_macro\src" />
       <recent name="D:\Users\Public\projetos\RustProjects\embedded_crates\nodes" />
       <recent name="D:\Users\Public\projetos\RustProjects\embedded_crates\nodes\nodes_base_builder" />
       <recent name="D:\Users\Public\projetos\RustProjects\embedded_crates\nodes\nodes\src\nodes\queue" />
-      <recent name="D:\Users\Public\projetos\RustProjects\embedded_crates\nodes\nodes_base_nodes\src" />
     </key>
   </component>
   <component name="RsExternalLinterProjectSettings">
-    <option name="channel" value="nightly" />
     <option name="runOnTheFly" value="true" />
   </component>
-  <component name="RunManager" selected="Cargo.Test test::test_builder (1)">
+  <component name="RunManager" selected="Cargo.Run">
     <configuration name="Expand nodes_base_runner_macro::input" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="command" value="expand --lib --color=always --theme=Dracula --tests input" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro" />
@@ -130,8 +184,8 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Test build_runner::test_builder (3)" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package nodes_base_builder --lib build_runner::test_builder -- --exact" />
+    <configuration name="Run" type="CargoCommandRunConfiguration" factoryName="Cargo Command" nameIsGenerated="true">
+      <option name="command" value="run" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <option name="emulateTerminal" value="true" />
       <option name="channel" value="DEFAULT" />
@@ -147,8 +201,42 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Test output::test_builder" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package nodes_base_builder --lib output::test_builder -- --exact" />
+    <configuration name="Test simple_test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package nodes_base --test mod simple_test" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test simple_test::test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package nodes_base --test mod simple_test::test -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test simple_test::test_res" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package nodes_base --test mod simple_test::test_res -- --exact" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <option name="emulateTerminal" value="true" />
       <option name="channel" value="DEFAULT" />
@@ -181,37 +269,21 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Test test::test_builder" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package nodes_base_runner_macro --lib test::test_builder -- --exact" />
-      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <option name="emulateTerminal" value="true" />
-      <option name="channel" value="DEFAULT" />
-      <option name="requiredFeatures" value="true" />
-      <option name="allFeatures" value="false" />
-      <option name="withSudo" value="false" />
-      <option name="buildTarget" value="REMOTE" />
-      <option name="backtrace" value="FULL" />
-      <envs />
-      <option name="isRedirectInput" value="false" />
-      <option name="redirectInputPath" value="" />
-      <method v="2">
-        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      </method>
-    </configuration>
     <list>
+      <item itemvalue="Cargo.Run" />
+      <item itemvalue="Cargo.Test simple_test" />
+      <item itemvalue="Cargo.Test simple_test::test" />
+      <item itemvalue="Cargo.Test simple_test::test_res" />
       <item itemvalue="Cargo.Expand nodes_base_runner_macro::input" />
-      <item itemvalue="Cargo.Test test::test_builder" />
       <item itemvalue="Cargo.Test test::test_builder (1)" />
-      <item itemvalue="Cargo.Test build_runner::test_builder (3)" />
-      <item itemvalue="Cargo.Test output::test_builder" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Cargo.Test simple_test::test" />
+        <item itemvalue="Cargo.Test simple_test::test_res" />
+        <item itemvalue="Cargo.Test simple_test" />
         <item itemvalue="Cargo.Test test::test_builder (1)" />
         <item itemvalue="Cargo.Expand nodes_base_runner_macro::input" />
-        <item itemvalue="Cargo.Test test::test_builder" />
-        <item itemvalue="Cargo.Test output::test_builder" />
-        <item itemvalue="Cargo.Test build_runner::test_builder (3)" />
       </list>
     </recent_temporary>
   </component>
@@ -238,7 +310,9 @@
       <workItem from="1702216356825" duration="7000" />
       <workItem from="1702216651462" duration="20424000" />
       <workItem from="1702409520530" duration="1052000" />
-      <workItem from="1702471297531" duration="16639000" />
+      <workItem from="1702471297531" duration="26003000" />
+      <workItem from="1702635275464" duration="28937000" />
+      <workItem from="1702765965185" duration="30024000" />
     </task>
     <servers />
   </component>
@@ -252,54 +326,89 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <url>file://$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
           <line>104</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
-          <line>491</line>
+          <url>file://$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>494</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
-          <line>618</line>
+          <url>file://$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>621</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
-          <line>744</line>
+          <url>file://$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>747</line>
           <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
-          <line>205</line>
+          <url>file://$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>206</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <url>file://$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
           <line>92</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <url>file://$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
           <line>35</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <url>file://$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
           <line>43</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <url>file://$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
           <line>126</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
-          <line>657</line>
+          <url>file://$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_macro/src/output.rs</url>
+          <line>660</line>
           <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base/nodes_base_runner/nodes_base_runner_deps/src/lib.rs</url>
+          <line>9</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base/tests/mod.rs</url>
+          <line>45</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base/tests/mod.rs</url>
+          <line>46</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base/tests/mod.rs</url>
+          <line>42</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes_base/tests/mod.rs</url>
+          <line>22</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes/src/nodes/queue/request.rs</url>
+          <line>132</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/nodes/src/nodes/queue/request.rs</url>
+          <line>137</line>
+          <option name="timeStamp" value="30" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

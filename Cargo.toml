@@ -1,4 +1,4 @@
 [workspace]
-members=["nodes", "nodes_base_runner/nodes_base_runner_macro", "nodes_base_runner/nodes_base_runner_deps", "nodes_base_nodes"]
+members=["nodes", "nodes_base/nodes_base_runner/nodes_base_runner_macro", "nodes_base/nodes_base_runner/nodes_base_runner_deps", "nodes_base/nodes_base_nodes", "nodes_base"]
 default-members=["nodes"]
 

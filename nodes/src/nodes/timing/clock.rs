@@ -1,56 +1,71 @@
+use core::borrow::BorrowMut;
 use core::cell::BorrowMutError;
-use crate::common_types::timing::{Duration, Time};
-use crate::nodes::base::{Node, NodeRef};
+use core::ops::{Coroutine, CoroutineState, Deref, DerefMut};
+use core::pin::Pin;
+use crate::base::{TryDeref, TryDerefMut};
+use crate::base::{Node, NodeRef, NodeRefMut, Process};
+use crate::timing::{Duration, Time};
 
 
-#[derive(Clone, PartialEq, Eq)]
-pub struct ClockReading {
-    pub current_time: Time,
-    pub delta_time:   Duration,
-}
+pub type ClockNode = Node<Time>;
+pub type ClockNMut<'a> = <ClockNode as TryDerefMut>::TMut<'a>;
+pub type ClockNRef<'a> = <ClockNode as TryDeref>::TRef<'a>;
 
-pub type ClockNode = Node<ClockReading>;
-pub type ClockNodeRef<'a> = NodeRef<'a, ClockReading>;
 pub trait TimeGetter {
     fn get_current_time(&mut self) -> Time;
 }
 
-impl<TSelf> TimeGetter for TSelf where TSelf: FnMut() -> Duration{
+impl<TSelf> TimeGetter for TSelf where TSelf: FnMut() -> Time{
     fn get_current_time(&mut self) -> Time {
         (self)()
     }
 }
 
-pub struct ClockProcess<'a, TTimeGetter: TimeGetter> {
+pub struct ClockProcess< TTimeGetter: TimeGetter> {
     time_getter:       TTimeGetter,
-    clock_node_ref:    ClockNodeRef<'a>,
 }
 
-impl<'a, TTimeGetter: TimeGetter>
-    ClockProcess<'a, TTimeGetter>
+impl< TTimeGetter: TimeGetter> ClockProcess< TTimeGetter>
 {
-    pub fn new(time_getter: TTimeGetter, clock_node: &'a ClockNode) -> Self {
-        let clock_node_ref = clock_node.make_ref();
-
+    pub fn new(time_getter: TTimeGetter) -> Self {
         Self{
             time_getter,
-            clock_node_ref
         }
-    }
-
-    pub fn try_update_clock_node(&mut self) -> Result<(), BorrowMutError>{
-        let mut clock_reading = self.clock_node_ref.try_borrow_mut()?;
-        let current_time = self.time_getter.get_current_time();
-        let delta_time = current_time - clock_reading.current_time;
-
-        clock_reading.current_time = current_time;
-        clock_reading.delta_time = delta_time;
-
-        Ok(())
     }
 }
 
 
+impl<TTimeGetter: TimeGetter> Process for ClockProcess<TTimeGetter>
+{
+    type TArgs<'args>
+        = ClockNMut<'args>;
+
+    fn resume<'a>(&mut self, mut clock_reading: Self::TArgs<'a>)
+    {
+        let current_time = self.time_getter.borrow_mut().get_current_time();
+
+        *clock_reading = current_time;
+    }
+}
 
 
+pub struct DeltaTimeProcess {
+    previous_time_reading: Option<Time>,
+}
+impl DeltaTimeProcess {
+    pub fn new() -> Self{
+        Self{previous_time_reading: None}
+    }
+}
 
+impl Process for DeltaTimeProcess{
+    type TArgs<'args> where Self: 'args = (ClockNRef<'args>, NodeRefMut<'args, Duration>);
+
+    fn resume<'args>(&mut self, (clock_node, mut output): Self::TArgs<'args>) {
+        let current_time_reading : &Time = clock_node.deref();
+        if let Some(previous_time_reading) = &self.previous_time_reading{
+            *output = (current_time_reading - previous_time_reading).to_num();
+        }
+        self.previous_time_reading = Some(current_time_reading.clone());
+    }
+}

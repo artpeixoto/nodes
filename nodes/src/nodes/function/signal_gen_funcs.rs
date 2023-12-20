@@ -1,4 +1,4 @@
-use crate::common_types::timing::Time;
+use crate::timing::{Time, Duration};
 
 pub fn new_square_wave_generator (
         cycle_duration: f32,
@@ -8,17 +8,17 @@ pub fn new_square_wave_generator (
     ) -> impl Fn(&Time) -> f32
 {
 	let func = {
-        let cycle_duration_us: 	u64 = ( cycle_duration * 1_000_000_f32 ) as u64;
-        let cycle_offset_us: 	u64 = ( cycle_offset   * 1_000_000_f32 ) as u64;
+        let cycle_duration:  Duration = Duration::from_num( cycle_duration  ) ;
+        let cycle_offset: 	 Duration = Duration::from_num( cycle_offset    ) ;
 
         let up_value 		    = amplitude + offset;
         let down_value 		= offset;
 
-        move |time: &u64| -> f32
+        move |time: &Time| -> f32
         {
-            let time_mod = (time + cycle_offset_us) % cycle_duration_us;
+            let time_mod = ( cycle_offset.add_unsigned(time.clone())) % cycle_duration;
             let value = 
-                if time_mod <= (cycle_duration_us / 2) {
+                if time_mod <= (cycle_duration / 2) {
                     up_value.clone().into()
                 } else {
                     down_value.clone().into()
@@ -36,15 +36,16 @@ pub fn new_pwm_wave_generator (
         offset:         f32,
     ) -> impl Fn(&f32, &Time) -> f32
 {
-    let cycle_duration_us: 	u64 = ( cycle_duration * 1_000_000_f32 ) as u64;
-    let cycle_offset_us: 	u64 = ( cycle_offset   * 1_000_000_f32 ) as u64;
+    let cycle_duration_us: 	Duration = Duration::from_num( cycle_duration ) ;
+    let cycle_offset_us: 	Duration = Duration::from_num( cycle_offset    ) ;
 
-    let up_value 		    = amplitude + offset;
+    let up_value 		= amplitude + offset;
     let down_value 		= offset;
 
-    move |current_val: &f32, time: &u64| -> f32 {
-        let val_duration = (current_val * (cycle_duration_us as f32)) as u64;
-        let duration_since_cycle_start = (time + cycle_offset_us) % cycle_duration_us;
+    move |current_val: &f32, time: &Time| -> f32 {
+        let val_duration = (current_val * cycle_duration_us.to_num::<f32>()) as u64;
+
+        let duration_since_cycle_start = ( cycle_offset_us.add_unsigned(time.clone())) % cycle_duration_us;
 
         if duration_since_cycle_start <= val_duration {
             up_value.clone().into()

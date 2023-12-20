@@ -127,7 +127,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
     let (nodes_ids_defn_ts, nodes_ids_construction_ts, nodes_ids_types, nodes_ids_keys) = {
         let nodes_ids_type_defn =
             quote! (
-                type NodeIdKey = *const str;
+                type NodeIdKey = usize;
 
                 #[derive(Clone, Copy, Default)]
                 struct NodeId<const NODE_ID: NodeIdKey> {}
@@ -145,12 +145,13 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
 
         let nodes_names_mod = {
             let individual_nodes_names =
-                nodes_definitions
+                nodes_indexes
                 .iter()
-                .map(|node_def| {
-                    let node_ident = &node_def.node_name;
+                .enumerate()
+                .map(|(ix, node_ix )| {
+                    let node_field = nodes_fields[node_ix];
                     quote!(
-                        pub const #node_ident: NodeIdKey = stringify!(#node_ident);
+                        pub const #node_field: NodeIdKey = #ix;
                     )
                 });
 
@@ -355,15 +356,14 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
                         let node_type = &nodes[*node_ix].node_type;
                         match mutability{
                             ProcArgMutability::Read  => quote!{<#node_type as TryDeref>::TRef<'a>},
-                            ProcArgMutability::Write => quote!{<#node_type as
-                                TryDerefMut>::TMut<'a>}
+                            ProcArgMutability::Write => quote!{<#node_type as TryDerefMut>::TMut<'a>}
                         }
                     })
                 };
 
                 let proc_gen_cond = {
                     quote!{
-                        #proc_gen_name: Process<TArgs=(#(#proc_gen_args),*)>
+                        for<'a> #proc_gen_name: Process<TArgs<'a> = (#(#proc_gen_args),*)> + 'a
                     }
                 };
                 (ix, (proc_gen_name, proc_gen_cond))
@@ -386,7 +386,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
                 &procs_generics_args[proc_ix]
             })
             .used_in(|procs_generics_args|quote!{
-                'a, #(#procs_generics_args),*
+                'pins, #(#procs_generics_args),*
             })
         };
 
@@ -408,7 +408,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
         let pins_procs_generics_args =
             procs_indexes.iter().map(|proc_ix|{
                 let generic_arg = &procs_generics_args[proc_ix];
-                quote!{Pin<#generic_arg>}
+                quote!{&'pins mut #generic_arg}
             });
         let procs_struct_defn_ts = quote!{
             struct Procs<#procs_generics_args_ts> (#(#pins_procs_generics_args),*)
@@ -426,7 +426,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
                         OpensRef<#proc_id_type> for Procs<#procs_generics_args_ts>
                         where #procs_generics_wheres_ts
                     {
-                        type TRet = #proc_generic_arg;
+                        type TRet = Pin<&'pins mut #proc_generic_arg>;
                         fn get_ref(&self, key: &#proc_id_type) -> &Self::TRet{
                             &self.#proc_field
                         }
@@ -448,8 +448,11 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
                 #(#procs_opens_impls_ts)*
             };
         let procs_construction_ts  = {
-            let procs_construction_args = procs.iter().map(|proc| quote!{Pin::new(&proc.func)});
-            quote!{Procs(#(#procs_construction_args),*)}
+            let procs_construction_args = procs.iter().map(|proc| {
+                let proc_func = &proc.func;
+                quote!{&mut #proc_func}
+            });
+            quote!{Procs(#(#procs_construction_args),*, )}
         };
         (procs_defn_ts, procs_construction_ts)
     };
@@ -661,12 +664,12 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
                             let node_field = &nodes_fields[node_index];
                             if !mutability.is_mut() {
                                 quote! {
-                                       #node_field
-                                       }
+                                    #node_field
+                                }
                             } else {
                                 quote! {
-                                       mut #node_field
-                                       }
+                                    mut #node_field
+                                }
                             }
                         })
                         .used_in(|nodes_fields_ts| quote! {
@@ -776,17 +779,13 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
                                 .map(|proc_index| {
                                     let proc_field = node_dependants_fields[proc_index];
                                     let proc_id_key = &procs_ids_keys[proc_index];
-                                    quote! {
-                                       {
-                                       let proc_id = &self.runner_data.procs_getters.#proc_field;
-                                       if self.current_cycle_state.executed.get_ref(proc_id) ==
-                                       &ProcExecutionState::NotExecuted{
-
-                                       self.current_cycle_state.execution_queue.push_back(#proc_id_key).unwrap();
-                                       *(self.current_cycle_state.executed.get_mut(proc_id))  = ProcExecutionState::Queued;
-                                       }
-                                       }
-                                       }
+                                    quote! { {
+                                        let proc_id = &self.runner_data.procs_getters.#proc_field;
+                                        if self.current_cycle_state.executed.get_ref(proc_id) == &ProcExecutionState::NotExecuted{
+                                            self.current_cycle_state.execution_queue.push_back(#proc_id_key).unwrap();
+                                            *(self.current_cycle_state.executed.get_mut(proc_id))  = ProcExecutionState::Queued;
+                                        }
+                                    } }
                                 })
                                 .used_in(TokenStream::from_iter)
                             };
@@ -921,7 +920,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
 
     let res = quote!{
         #static_defns_ts
-        #construction_ts
+        let mut runner = #construction_ts;
     };
     res
 }
@@ -932,9 +931,4 @@ macro_rules! print_val {
 }
 macro_rules! debug_val {
         ($val_name: expr) => {println!("{} = {:#?}", stringify!($val_name), &$val_name );};
-}
-
-
-mod asdf{
-
 }

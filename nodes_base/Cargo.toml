@@ -1,0 +1,13 @@
+cargo-features=["edition2024"]
+
+[package]
+name = "nodes_base"
+version = "0.1.0"
+edition = "2024"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+nodes_base_nodes        = {path="./nodes_base_nodes"}
+nodes_base_runner_macro = {path="./nodes_base_runner/nodes_base_runner_macro"}
+nodes_base_runner_deps  = {path="./nodes_base_runner/nodes_base_runner_deps"}

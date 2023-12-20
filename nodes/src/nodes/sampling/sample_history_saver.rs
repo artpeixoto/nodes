@@ -1,27 +1,24 @@
-use core::{ops::Deref};
-use crate::{nodes::base::{ NodeRef}};
-use super::{SampleNodeRef};
-use crate::nodes::sampling::sample_history::SampleHistory;
-use crate::nodes::base::process_errors::NodeBorrowError;
-use crate::nodes::base::SimpleProcess;
+use core::marker::PhantomData;
+use core::ops::Deref;
+use core::pin::Pin;
+use crate::base::Process;
+use crate::sampling::sample_history::SampleHistoryNRef;
+use crate::sampling::sample_node::SampleNRef;
 
+use super::SampleHistoryNMut;
 
-pub struct SampleHistorySaver<'a, T:Clone, const history_size: usize>{
-    input:  SampleNodeRef<'a, T>,
-    output: NodeRef<'a, SampleHistory<T, history_size>>,
-}
+pub struct SampleHistorySaver<T:Clone, const history_size: usize>(PhantomData<T>);
 
 impl<T:Clone, const history_size: usize>
-    SimpleProcess for SampleHistorySaver<'_, T, history_size>
+    Process for SampleHistorySaver<T, history_size>
+    where 
+        for<'a>  T: 'a
 {
-    fn next(&mut self) -> Result<(), NodeBorrowError>{
-        let input_ref = self.input.try_borrow()?;
-
-        if let Some(sample) = input_ref.deref() {
-            let mut output = self.output.try_borrow_mut()?;
-            output.push_sample(sample.clone());
+    type TArgs<'a>  = (SampleNRef<'a, T>, SampleHistoryNMut<'a, T, history_size>);
+    fn resume<'a>(&mut self, (sample, mut sample_history): Self::TArgs<'a>){
+        if let Some(sample) = sample.deref(){
+            sample_history.push_sample(sample.clone());
         }
-        Ok(())
     }
 }
 

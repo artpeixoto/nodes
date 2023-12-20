@@ -178,12 +178,9 @@ pub(crate) struct ProcsInput {
 
 impl Parse for ProcsInput{
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        println!("input is {:#?}", &input);
 
         let braced_input ;
         braced!(braced_input in input);
-
-        println!("braced_input is {:#?}", &braced_input);
 
         let procs =  {
             let procs = braced_input.parse_terminated(

@@ -4,5 +4,3 @@ channel="nightly"
 [unstable]
 build-std = ["core", "alloc"]
 
-[build]
-target="x86_64-pc-windows-msvc"

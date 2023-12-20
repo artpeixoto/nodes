@@ -1,6 +1,14 @@
+use core::convert::TryFrom;
 use heapless::Deque;
+use crate::base::extensions::used_in::UsedInTrait;
+use crate::base::{Node, NodeRef, NodeRefMut};
 
-use crate::extensions::used_in::UsedInTrait;
+pub type SampleHistoryNode<T, const HISTORY_SIZE: usize> = Node<SampleHistory<T, HISTORY_SIZE>>;
+pub type SampleHistoryNRef<'a, T, const HISTORY_SIZE: usize>
+    = NodeRef<'a, SampleHistory<T, HISTORY_SIZE>>;
+pub type SampleHistoryNMut<'a, T, const HISTORY_SIZE: usize>
+    = NodeRefMut<'a, SampleHistory<T, HISTORY_SIZE>>;
+
 
 pub enum Direction{
     DownCounting,
@@ -10,8 +18,7 @@ pub enum Direction{
 #[derive(Clone, Copy, PartialEq, PartialOrd)]
 pub struct FullIndex(pub usize);
 
-
-pub struct SampleData<T>{
+pub struct SampleHistoryDataPoint<T>{
     pub index:  FullIndex,	
     pub value:  T,
 }
@@ -35,11 +42,11 @@ impl<T, const history_size: usize> SampleHistory<T, history_size>{
     }
 
     #[inline]
-    pub fn get_last_full_index(&self) -> FullIndex{
+    pub fn last_full_index(&self) -> FullIndex{
         FullIndex(self.full_len - 1)
     }
     pub fn get_samples<'a>(&'a self, dir: Direction) -> impl ExactSizeIterator<Item =
-    SampleData<&'a T>> + 'a
+    SampleHistoryDataPoint<&'a T>> + 'a
     {
         let mut generator = ({
             let (mut current, step) = match dir {
@@ -58,8 +65,8 @@ impl<T, const history_size: usize> SampleHistory<T, history_size>{
     }
 
     #[inline]
-    pub fn full_len(&self) -> usize{
-        self.full_len
+    pub fn full_len(&self) -> FullIndex{
+        FullIndex(self.full_len)
     }
 
     #[inline]
@@ -72,7 +79,7 @@ impl<T, const history_size: usize> SampleHistory<T, history_size>{
         self.samples.len()
     }
 
-    pub fn get(&self, index: isize) -> Option<SampleData<&T>>{
+    pub fn get(&self, index: isize) -> Option<SampleHistoryDataPoint<&T>>{
         let u_index = {
             let len = self.len() as isize;
             if index >= -len && index < len {
@@ -88,7 +95,7 @@ impl<T, const history_size: usize> SampleHistory<T, history_size>{
         self.internal_get(u_index)
     }
 
-    fn internal_get(&self, mut index: usize) -> Option<SampleData<&T>>{
+    fn internal_get(&self, mut index: usize) -> Option<SampleHistoryDataPoint<&T>>{
         let sample = {
             let slices = self.samples.as_slices();
             if index < slices.0.len() {
@@ -100,7 +107,7 @@ impl<T, const history_size: usize> SampleHistory<T, history_size>{
 
         let sample_full_index = FullIndex(self.get_first_full_index().0 + index);
 
-        Some( SampleData {
+        Some( SampleHistoryDataPoint {
             index: sample_full_index,
             value: sample
         })

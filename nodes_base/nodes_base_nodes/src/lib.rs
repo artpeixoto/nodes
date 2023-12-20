@@ -3,9 +3,10 @@
 #![feature(associated_type_defaults)]
 #![feature(error_in_core)]
 #![feature(coroutine_trait)]
+#![feature(never_type)]
 
-pub mod node;
-pub mod proc;
+mod node;
+mod proc;
 pub mod extensions;
 
 pub use node::*;

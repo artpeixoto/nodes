@@ -1,38 +1,25 @@
 use alloc::boxed::Box;
 use core::error::Error;
+use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
+use core::pin::Pin;
+use crate::base::{NodeRefMut, Process};
+use crate::sampling::sample_node::SampleNRef;
 
-use crate::nodes::base::{Node, NodeRef, SimpleProcess};
-use crate::nodes::base::process_errors::NodeBorrowError;
-use super::{SampleNode, SampleNodeRef};
+pub struct SampleLatcher<T:Clone>(PhantomData<T>);
 
-pub struct SampleLatcher<'node_ref, T:Clone> {
-	pub sample_input: 	SampleNodeRef<'node_ref, T>,
-	pub latch_output: 	NodeRef<'node_ref, T>
-}
-
-impl<'node_ref, T: Clone> SampleLatcher<'node_ref, T> {
-	pub fn new(latch_output: &'node_ref Node<T>, sample_input: &'node_ref SampleNode<T>) -> Self{
-		let latch_output = latch_output.make_ref();
-		let sample_input = sample_input.make_ref();
-
-		Self {
-			sample_input,
-			latch_output,
-		}
+impl< T: Clone> SampleLatcher<T> {
+	pub fn new() -> Self{
+		Self(PhantomData{})
 	}
 }
 
-impl<'node_ref, TValue:Clone>
-	SimpleProcess for SampleLatcher<'node_ref, TValue>
+impl<TValue:Clone> Process for SampleLatcher<TValue> where for<'a> TValue: 'a
 {
-    fn next(&mut self) -> Result<(), NodeBorrowError> {
-		let sample_ref = self.sample_input.try_borrow()?;
-
-		if let Some(sample_value) = sample_ref.deref(){
-			*(self.latch_output.try_borrow_mut()?.deref_mut()) = sample_value.clone();
+	type TArgs<'a> = (SampleNRef<'a, TValue>, NodeRefMut<'a, TValue>);
+    fn resume<'a>(&mut self, (sample_input,mut latch_output): Self::TArgs<'a>) {
+		if let Some(sample_value) = sample_input.deref(){
+			*latch_output = sample_value.clone()
 		}
-
-		Ok(())
     }
 }
