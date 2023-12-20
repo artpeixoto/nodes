@@ -2,14 +2,14 @@ use core::error::Error;
 use core::iter::from_fn;
 use core::marker::PhantomData;
 use core::ops::DerefMut;
-use core::pin::Pin;
+
 
 use embedded_hal::serial::Read;
 use heapless::Deque;
 use crate::base::Process;
 use crate::queue::queue_node::QueueNMut;
-use crate::base::{Node, NodeRef};
-use crate::base::process_errors::NodeBorrowError;
+
+
 
 pub struct ReaderProc<Word, Reader, const buffer_size: usize>
 	where Reader: Read<Word>
@@ -59,7 +59,7 @@ impl<Word, Reader, const buffer_size: usize>
 	type TArgs<'args>  
 		= QueueNMut<'args, Word, buffer_size>;
 
-	fn resume<'args>(&mut self, mut output: Self::TArgs<'args>) 
+	fn resume<'args>(&mut self, output: Self::TArgs<'args>) 
 	{
 		self.read(
 			output

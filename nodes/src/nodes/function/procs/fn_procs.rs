@@ -1,7 +1,7 @@
 
 pub mod unary_func{
     use core::marker::PhantomData;
-    use core::pin::Pin;
+    
     use crate::base::{NodeRef, NodeRefMut, Process};
 
     pub struct UnaryFunc<TInput, TOutput, TFunc>
@@ -36,7 +36,7 @@ pub mod unary_func{
 pub use unary_func::*;
 pub mod binary_func {
     use core::marker::PhantomData;
-    use core::pin::Pin;
+    
     use crate::base::{NodeRef, NodeRefMut, Process};
 
     pub struct

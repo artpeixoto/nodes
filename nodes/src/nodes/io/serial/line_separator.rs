@@ -1,17 +1,17 @@
 use alloc::string::String;
 use core::mem;
 use core::ops::DerefMut;
-use core::pin::Pin;
+
 use heapless::Deque;
-use crate::base::{NodeRef, Process};
-use crate::queue::queue_node::{HistoryNode, QueueNMut, QueueNode};
+use crate::base::{Process};
+use crate::queue::queue_node::{QueueNMut};
 
 pub struct LineSeparator< const output_buffer_size: usize, const input_buffer_size: usize> {
 	string_buffer: String,
 }
 impl<const output_buffer_size: usize, const input_buffer_size: usize> Process for LineSeparator<output_buffer_size, input_buffer_size>
 {
-	type TArgs<'args> where Self: 'args = (QueueNMut<'args, char, input_buffer_size>, QueueNMut<'args, String, output_buffer_size>);
+	type TArgs<'args>  = (QueueNMut<'args, char, input_buffer_size>, QueueNMut<'args, String, output_buffer_size>) where Self: 'args;
 
 	fn resume<'args>(&mut self, (chars_input, lines_output): Self::TArgs<'args>) {
 		self.read_many(chars_input, lines_output);

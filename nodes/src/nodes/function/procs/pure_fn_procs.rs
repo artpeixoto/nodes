@@ -1,7 +1,7 @@
 
 pub mod unary_func{
     use core::ops::Deref;
-    use core::pin::Pin;
+    
     use crate::base::{NodeRef, NodeRefMut, Process};
 
     pub struct PureUnaryFunc<TInput, TOutput, TFunc>
@@ -55,7 +55,7 @@ pub use unary_func::*;
 
 pub mod binary_func{
     use core::ops::Deref;
-    use core::pin::Pin;
+    
     use crate::base::{NodeRef, NodeRefMut, Process};
 
     pub struct PureBinaryFunc< TInput1: PartialEq + Clone, TInput2: PartialEq + Clone, TOutput, TFunc: Fn(&TInput1, &TInput2) -> TOutput>{

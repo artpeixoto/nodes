@@ -1,9 +1,9 @@
 use core::borrow::BorrowMut;
-use core::cell::BorrowMutError;
-use core::ops::{Coroutine, CoroutineState, Deref, DerefMut};
-use core::pin::Pin;
+
+use core::ops::{Deref};
+
 use crate::base::{TryDeref, TryDerefMut};
-use crate::base::{Node, NodeRef, NodeRefMut, Process};
+use crate::base::{Node, NodeRefMut, Process};
 use crate::timing::{Duration, Time};
 
 
@@ -59,7 +59,7 @@ impl DeltaTimeProcess {
 }
 
 impl Process for DeltaTimeProcess{
-    type TArgs<'args> where Self: 'args = (ClockNRef<'args>, NodeRefMut<'args, Duration>);
+    type TArgs<'args>  = (ClockNRef<'args>, NodeRefMut<'args, Duration>) where Self: 'args;
 
     fn resume<'args>(&mut self, (clock_node, mut output): Self::TArgs<'args>) {
         let current_time_reading : &Time = clock_node.deref();

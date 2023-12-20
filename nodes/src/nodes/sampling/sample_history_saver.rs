@@ -1,8 +1,8 @@
 use core::marker::PhantomData;
 use core::ops::Deref;
-use core::pin::Pin;
+
 use crate::base::Process;
-use crate::sampling::sample_history::SampleHistoryNRef;
+
 use crate::sampling::sample_node::SampleNRef;
 
 use super::SampleHistoryNMut;

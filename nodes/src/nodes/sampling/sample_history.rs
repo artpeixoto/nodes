@@ -48,7 +48,7 @@ impl<T, const history_size: usize> SampleHistory<T, history_size>{
     pub fn get_samples<'a>(&'a self, dir: Direction) -> impl ExactSizeIterator<Item =
     SampleHistoryDataPoint<&'a T>> + 'a
     {
-        let mut generator = ({
+        let mut generator = {
             let (mut current, step) = match dir {
                 Direction::DownCounting => { (0, 1) }
                 Direction::UpCounting => { (-1, -1) }
@@ -59,7 +59,7 @@ impl<T, const history_size: usize> SampleHistory<T, history_size>{
                 current += step;
                 res
             }
-        });
+        };
 
         (0..self.len()).map(move |_i| generator())
     }
@@ -95,7 +95,7 @@ impl<T, const history_size: usize> SampleHistory<T, history_size>{
         self.internal_get(u_index)
     }
 
-    fn internal_get(&self, mut index: usize) -> Option<SampleHistoryDataPoint<&T>>{
+    fn internal_get(&self, index: usize) -> Option<SampleHistoryDataPoint<&T>>{
         let sample = {
             let slices = self.samples.as_slices();
             if index < slices.0.len() {

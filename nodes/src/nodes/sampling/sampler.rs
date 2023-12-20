@@ -1,9 +1,9 @@
-use core::{error::Error, ops::Deref};
-use alloc::boxed::Box;
-use core::ops::Coroutine;
-use core::pin::Pin;
+use core::{ops::Deref};
+
+
+
 use crate::base::{NodeRef, Process};
-use crate::sampling::sample_node::{SampleNRef, SampleNMut};
+use crate::sampling::sample_node::{SampleNMut};
 use crate::signals::activation_signal::ActivationSignalNRef;
 
 pub struct Sampler<T: Clone>{

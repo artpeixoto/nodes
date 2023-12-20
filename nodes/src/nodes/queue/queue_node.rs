@@ -1,6 +1,6 @@
-use heapless::Deque;
+
 use crate::base::{TryDeref, TryDerefMut};
-use crate::base::{Node, NodeRef};
+use crate::base::{Node};
 
 pub type HistoryNode<T, const SIZE: usize> = Node<heapless::HistoryBuffer<T, SIZE>>;
 pub type HistoryNRef<'a, T, const SIZE: usize> = <HistoryNode<T, SIZE> as TryDeref>::TRef<'a>;

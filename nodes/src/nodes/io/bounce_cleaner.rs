@@ -1,7 +1,7 @@
-use core::pin::Pin;
+
 use crate::base::{NodeRefMut, Process};
 use crate::common_types::digital_value::DigitalValue;
-use crate::sampling::sample_history::{Direction, FullIndex, SampleHistoryNMut, SampleHistoryNRef};
+use crate::sampling::sample_history::{Direction, FullIndex, SampleHistoryNRef};
 
 pub struct BounceCleaner<const sample_queue_size: usize> {
 	last_full_index: 	 FullIndex,

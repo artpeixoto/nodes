@@ -1,16 +1,16 @@
-use core::pin::Pin;
+
 use core::ops::DerefMut;
 use crate::base::{NodeRef, NodeRefMut, Process};
-use crate::sampling::sample_history::Direction;
+
 use crate::signals::activation_signal::ActivationSignal;
-use crate::timing::{Duration, Time};
+use crate::timing::{Time};
 use crate::timing::periodic::cycles_keeper::CyclesKeeper;
 
 pub mod cycles_keeper{
-    use core::pin::Pin;
+    
     use fixed::traits::Fixed;
 
-    use crate::base::{NodeRef, NodeRefMut, Process};
+    
     use crate::timing::{Duration, Time};
 
     pub struct CyclesKeeper{
@@ -62,7 +62,7 @@ pub mod cycles_keeper{
 }
 pub struct PeriodicCyclesProcess(pub CyclesKeeper);
 impl Process for PeriodicCyclesProcess {
-    type TArgs<'args> where Self: 'args = (NodeRef<'args, Time>, NodeRefMut<'args, u64>);
+    type TArgs<'args>  = (NodeRef<'args, Time>, NodeRefMut<'args, u64>) where Self: 'args;
 
     fn resume<'args>(&mut self, (current_time,mut cycles_count): Self::TArgs<'args>) {
         let cycles_counted = self.0.update(&current_time);
@@ -74,7 +74,7 @@ impl Process for PeriodicCyclesProcess {
 pub struct PeriodicSignalSourceProc(pub CyclesKeeper);
 
 impl Process for PeriodicSignalSourceProc{
-    type TArgs<'args> where Self: 'args = (NodeRef<'args, Time>, NodeRefMut<'args, ActivationSignal>);
+    type TArgs<'args>  = (NodeRef<'args, Time>, NodeRefMut<'args, ActivationSignal>) where Self: 'args;
 
     fn resume<'args>(&mut self, (current_time, mut activation_signal): Self::TArgs<'args>) {
         let cycles_count = self.0.update(&current_time);

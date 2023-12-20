@@ -1,13 +1,13 @@
-use alloc::string::{String, Drain};
-use core::{fmt::{Debug, Write}, marker::PhantomData};
+use alloc::string::{String};
+use core::{fmt::{Write}, marker::PhantomData};
 use core::ops::{DerefMut, Not};
-use core::pin::Pin;
+
 use heapless::Deque;
-use crate::base::{Node, NodeRef, NodeRefMut, Process, TryDeref, TryDerefMut};
+use crate::base::{Node, NodeRef, Process, TryDeref, TryDerefMut};
 use crate::signals::activation_signal::ActivationSignalNRef;
-use crate::nodes::sampling::sample_history::{SampleHistory};
-use crate::nodes::sampling::sample_history::Direction;
-use crate::nodes::sampling::sample_history::FullIndex;
+
+
+
 
 
 pub type LogQueue<const QUEUE_SIZE: usize> = Deque<String, QUEUE_SIZE>;
@@ -24,12 +24,12 @@ pub struct LogWriter<TWrite: Write, const msg_queue_size: usize>{
 impl<TWrite: Write, const msg_queue_size: usize> Process for LogWriter<TWrite, msg_queue_size>
 {
 	type TArgs<'args>  = LogQueueNMut<'args, msg_queue_size>;
-    fn resume<'a>(&mut self, mut msg_queue: Self::TArgs<'a>) {
+    fn resume<'a>(&mut self, _msg_queue: Self::TArgs<'a>) {
     }
 }
 
 impl<TWrite: Write, const msg_queue_size: usize> LogWriter<TWrite, msg_queue_size> {
-	pub fn try_write_all(&mut self , queue: impl DerefMut<Target=LogQueue<msg_queue_size>>){
+	pub fn try_write_all(&mut self , _queue: impl DerefMut<Target=LogQueue<msg_queue_size>>){
 
 	}
 }
