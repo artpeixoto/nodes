@@ -2,16 +2,17 @@ use alloc::string::String;
 use core::mem;
 use core::ops::DerefMut;
 
-use heapless::Deque;
-use crate::base::{Process};
-use crate::queue::queue_node::{QueueNMut};
+use heapless::{Deque, spsc::Queue};
+use crate::{base::{Process}, queue::queue_node::QueueNMut};
 
-pub struct LineSeparator< const output_buffer_size: usize, const input_buffer_size: usize> {
+pub struct LineSeparator<const OUTPUT_BUFFER_SIZE: usize, const INPUT_BUFFER_SIZE: usize> {
 	string_buffer: String,
 }
-impl<const output_buffer_size: usize, const input_buffer_size: usize> Process for LineSeparator<output_buffer_size, input_buffer_size>
+
+impl<const OUTPUT_BUFFER_SIZE: usize, const INPUT_BUFFER_SIZE: usize> 
+	Process for LineSeparator<OUTPUT_BUFFER_SIZE, INPUT_BUFFER_SIZE>
 {
-	type TArgs<'args>  = (QueueNMut<'args, char, input_buffer_size>, QueueNMut<'args, String, output_buffer_size>) where Self: 'args;
+	type TArgs<'args>  = (QueueNMut<'args, char, INPUT_BUFFER_SIZE>, QueueNMut<'args, String, OUTPUT_BUFFER_SIZE>) where Self: 'args;
 
 	fn resume<'args>(&mut self, (chars_input, lines_output): Self::TArgs<'args>) {
 		self.read_many(chars_input, lines_output);
@@ -29,9 +30,9 @@ impl<const output_buffer_size: usize, const input_buffer_size: usize>
 {
 	pub fn read(
 		&mut self,
-		mut char_input: impl DerefMut<Target=Deque<char, input_buffer_size>>,
+		mut char_input: impl DerefMut<Target=Queue<char, input_buffer_size>>,
 	) -> ReadFinished {
-		while let Some(new_char) = char_input.pop_front(){
+		while let Some(new_char) = char_input.dequeue(){
 			match new_char{
 				'\n' | '\r' => return ReadFinished::LineFinished,
 				_ 			=> self.string_buffer.push(new_char),
@@ -42,13 +43,13 @@ impl<const output_buffer_size: usize, const input_buffer_size: usize>
 
 	pub fn read_many(
 		&mut self,
-		mut char_input: 	impl DerefMut<Target = Deque<char, input_buffer_size>>,
-		mut lines_output: 	impl DerefMut<Target = Deque<String, output_buffer_size>>,
+		mut char_input: 	impl DerefMut<Target = Queue<char, input_buffer_size>>,
+		mut lines_output: 	impl DerefMut<Target = Queue<String, output_buffer_size>>,
 	) {
 		while (!lines_output.is_full()) && (self.read(&mut *char_input) == ReadFinished::LineFinished) {
 			self.string_buffer.shrink_to_fit();
 			let new_string = mem::replace(&mut self.string_buffer , String::new());
-			lines_output.push_back(new_string).unwrap();
+			lines_output.enqueue(new_string).unwrap();
 		}
 	}
 }

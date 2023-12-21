@@ -3,19 +3,17 @@ use core::iter::from_fn;
 use core::marker::PhantomData;
 use core::ops::DerefMut;
 
-
 use embedded_hal::serial::Read;
 use heapless::Deque;
+use heapless::spsc::Queue;
 use crate::base::Process;
 use crate::queue::queue_node::QueueNMut;
-
-
 
 pub struct ReaderProc<Word, Reader, const buffer_size: usize>
 	where Reader: Read<Word>
 {
 	reader: Reader,
-	output_phantom: PhantomData<Deque<Word, buffer_size>>,
+	output_phantom: PhantomData<Queue<Word, buffer_size>>,
 }
 
 
@@ -33,7 +31,7 @@ impl< Word, TReader, const buffer_size: usize>
 	}
 	fn read (
 		&mut self,
-		mut output: impl DerefMut<Target=Deque<Word, buffer_size>>,
+		mut output: impl DerefMut<Target=Queue<Word, buffer_size>>,
 	) -> usize {
 		let input_iter =
 			from_fn(|| self.reader.read().ok())
@@ -43,7 +41,7 @@ impl< Word, TReader, const buffer_size: usize>
 		let mut read_count: usize = 0;
 		for input in input_iter{
 			read_count += 1;
-			unsafe{ output.push_front_unchecked(input); }
+			unsafe{ output.enqueue_unchecked(input); }
 		}
 		read_count
 	}

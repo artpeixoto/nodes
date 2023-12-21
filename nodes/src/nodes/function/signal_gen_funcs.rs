@@ -29,6 +29,7 @@ pub fn new_square_wave_generator (
 
     func
 }
+
 pub fn new_pwm_wave_generator (
         cycle_duration: f32,
         cycle_offset:   f32,

@@ -426,7 +426,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
                         OpensRef<#proc_id_type> for Procs<#procs_generics_args_ts>
                         where #procs_generics_wheres_ts
                     {
-                        type TRet = Pin<&'pins mut #proc_generic_arg>;
+                        type TRet = &'pins mut #proc_generic_arg;
                         fn get_ref(&self, key: &#proc_id_type) -> &Self::TRet{
                             &self.#proc_field
                         }

@@ -19,7 +19,7 @@ mod simple_test {
 
     impl Process for CyclesCounter {
         type TArgs<'a> = NodeRefMut<'a, u64>;
-        fn resume<'a>(self: Pin<&mut Self>, mut args: Self::TArgs<'a>) {
+        fn resume<'a>(&mut self, mut args: Self::TArgs<'a>) {
             *args += 1_u64;
         }
     }
@@ -28,8 +28,8 @@ mod simple_test {
 
     impl Process for CyclesCountLogger {
         type TArgs<'a> = NodeRef<'a, u64>;
-        fn resume<'a>(self: Pin<&mut Self>, args: Self::TArgs<'a>) {
-            if args.deref() % 1000 == 0 {
+        fn resume<'a>(&mut self, args: Self::TArgs<'a>) {
+            if args.deref() % 10_000_000 == 0 {
                 println!("cycles count is {}", args.deref());
             }
         }

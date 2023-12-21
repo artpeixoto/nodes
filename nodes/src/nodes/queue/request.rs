@@ -17,6 +17,8 @@ pub enum Request<TReq, TAns> {
     Answer(TAns),
 }
 
+pub type RequestSituation = Request<(), ()>;
+
 impl<TReq, TAns> Request<TReq, TAns> {
     pub fn has_answer(&self) -> bool{
         match self{
@@ -28,30 +30,44 @@ impl<TReq, TAns> Request<TReq, TAns> {
 
 
 pub type RequestNode<TReq, TAns> = Node<Option<Request<TReq, TAns>>>;
-pub type RequestRef<'a, TReq, TAns> = RequestNode<TReq, TAns>::TRef<'a>;
-pub type RequestMut<'a, TReq, TAns> = RequestNode<TReq, TAns>::TMut<'a>;
+pub type RequestNRef<'a, TReq, TAns> = RequestNode<TReq, TAns>::TRef<'a>;
+pub type RequestNMut<'a, TReq, TAns> = RequestNode<TReq, TAns>::TMut<'a>;
 
 mod request_queue {
+    use super::*;
     use core::array;
     use core::iter::FromIterator;
+    use core::marker::PhantomData;
     use core::mem::{ManuallyDrop, MaybeUninit};
     use core::ops::Deref;
     use heapless::{FnvIndexMap, FnvIndexSet};
-    use base::extensions::used_in::UsedInTrait;
-    use base::Node;
-    use queue::request::Request;
+    use crate::base::extensions::used_in::UsedInTrait;
+    use crate::base::Node;
+    use crate::queue::request::Request;
+
+
+    use self::request_queue_internals::RequestQueue;
 
     pub type RequestQueueNode<TReq, TAns, const QUEUE_SIZE: usize> = Node<RequestQueue<TReq, TAns, QUEUE_SIZE>>;
-    pub type RequestQueueNRef<'a, TReq, TAns, const QUEUE_SIZE: usize> = Node<RequestQueue<TReq, TAns, QUEUE_SIZE>>::TRef<'a>;
-    pub type RequestQueueNMut<'a, TReq, TAns, const QUEUE_SIZE: usize> = Node<RequestQueue<TReq, TAns, QUEUE_SIZE>>::TMut<'a>;
+    pub type RequestQueueNRef<'a, TReq, TAns, const QUEUE_SIZE: usize> = <nodes_base::Node<RequestQueue<TReq, TAns, QUEUE_SIZE>> as nodes_base::TryDeref>::TRef<'a>;
+    pub type RequestQueueNMut<'a, TReq, TAns, const QUEUE_SIZE: usize> = <nodes_base::Node<RequestQueue<TReq, TAns, QUEUE_SIZE>> as nodes_base::TryDerefMut>::TMut<'a>;
     pub type RequestIdentifier = u32;
 
-    mod request_queue_internals{
+    mod request_queue_internals {
+        use core::mem::MaybeUninit;
+        use heapless::FnvIndexSet;
+        use super::*;
+        pub struct RequestQueue<TReq, TAns, const QUEUE_SIZE: usize> {
+            pub(super) last_identifier:    RequestIdentifier,
+            pub(super) id_situations_data: IdSituationKeeper<QUEUE_SIZE>,
+            pub(super) loc_info:           LocationInfoKeeper<QUEUE_SIZE>,
+            pub(super) queue_data:         [RequestQueueDataCell<TReq, TAns>; QUEUE_SIZE],
+        }
 
-        struct IdSituationKeeper<const SIZE: usize> {
-            question_ids: FnvIndexSet<RequestIdentifier, SIZE>,
-            processing_ids: FnvIndexSet<RequestIdentifier, SIZE>,
-            answer_ids: FnvIndexSet<RequestIdentifier, SIZE>,
+        pub(super) struct IdSituationKeeper<const SIZE: usize> {
+            pub(super) question_ids:   FnvIndexSet<RequestIdentifier, SIZE>,
+            pub(super) processing_ids: FnvIndexSet<RequestIdentifier, SIZE>,
+            pub(super) answer_ids:     FnvIndexSet<RequestIdentifier, SIZE>,
         }
 
         #[derive(Debug)]
@@ -61,7 +77,7 @@ mod request_queue {
         }
 
         impl<const SIZE: usize> IdSituationKeeper<SIZE> {
-            fn set_situation(
+            pub(super) fn set_situation(
                 &mut self,
                 req_id: RequestIdentifier,
                 old_situation: Option<RequestSituation>,
@@ -87,24 +103,22 @@ mod request_queue {
                 }
                 Ok(())
             } }
-            fn get_situation(&self, req_id: RequestIdentifier) -> Option<RequestSituation> {
+            pub(super) fn get_situation(&self, req_id: RequestIdentifier) -> Option<RequestSituation> {
                 if self.question_ids.contains(&req_id) {
-                    Some(Request::Question(()))
+                    Some(RequestSituation::Question(()))
                 } else if self.processing_ids.contains(&req_id) {
-                    Some(Request::Processing)
+                    Some(RequestSituation::Processing)
                 } else if self.answer_ids.contains(&req_id) {
-                    Some(Request::Answer(()))
+                    Some(RequestSituation::Answer(()))
                 } else {
                     None
                 }
             }
-
-
-            unsafe fn set_situation_unchecked(
+            pub(super) unsafe fn set_situation_unchecked(
                 &mut self,
-                req_id: RequestIdentifier,
-                old_situation: Option<RequestSituation>,
-                new_situation: Option<RequestSituation>,
+                req_id:         RequestIdentifier,
+                old_situation:  Option<RequestSituation>,
+                new_situation:  Option<RequestSituation>,
             ) {
                 unsafe {
                     if new_situation != old_situation {
@@ -130,20 +144,20 @@ mod request_queue {
             }
         }
 
-        struct LocationInfoKeeper<const SIZE: usize> {
-            id_to_location: FnvIndexMap<RequestIdentifier, usize, SIZE>,
-            open_locations: FnvIndexSet<usize, SIZE>,
+        pub(super) struct LocationInfoKeeper<const SIZE: usize> {
+            pub(super) id_to_location: FnvIndexMap<RequestIdentifier, usize, SIZE>,
+            pub(super) open_locations: FnvIndexSet<usize, SIZE>,
         }
 
         impl<const SIZE: usize> LocationInfoKeeper<SIZE> {
-            fn get_open_loc(&mut self, req_id: RequestIdentifier) -> Option<usize> {
+            pub(super) fn get_open_loc(&mut self, req_id: RequestIdentifier) -> Option<usize> {
                 let loc = *self.open_locations.first()?;
                 self.id_to_location.insert(req_id, loc).unwrap();
                 self.open_locations.remove(&loc);
 
                 Some(loc)
             }
-            fn clear_loc(&mut self, req_id: RequestIdentifier) -> bool {
+            pub(super) fn clear_loc(&mut self, req_id: RequestIdentifier) -> bool {
                 if let Some(loc) = self.id_to_location.remove(&req_id) {
                     self.open_locations.insert(loc).unwrap();
                     true
@@ -153,25 +167,17 @@ mod request_queue {
             }
         }
 
-        pub struct RequestQueue<TReq, TAns, const QUEUE_SIZE: usize> {
-            last_identifier: RequestIdentifier,
-            id_situations_data: IdSituationKeeper<QUEUE_SIZE>,
-            loc_info: LocationInfoKeeper<QUEUE_SIZE>,
-            queue_data: [QueueDataCell<TReq, TAns>; QUEUE_SIZE],
+        pub(super) union RequestQueueDataCellContent<TReq, TAns> {
+            pub(super) question:   ManuallyDrop<TReq>,
+            pub(super) answer:     ManuallyDrop<TAns>,
         }
 
-        union RequestUnion<TReq, TAns> {
-            question: ManuallyDrop<TReq>,
-            answer: ManuallyDrop<TAns>,
-        }
+        pub(super) type RequestQueueDataCell<TReq, TAns> = MaybeUninit<RequestQueueDataCellContent<TReq, TAns>>;
 
-        type RequestSituation = Request<(), ()>;
-        type QueueDataCell<TReq, TAns> = MaybeUninit<RequestUnion<TReq, TAns>>;
-
-        struct QueueRequestHeader {
-            location: usize,
-            situation: RequestSituation,
-            id: RequestIdentifier,
+        pub(super) struct RequestQueueReqHeader {
+            pub(super) location:   usize,
+            pub(super) situation:  RequestSituation,
+            pub(super) id:         RequestIdentifier,
         }
 
         impl<TReq, TAns, const QUEUE_SIZE: usize> RequestQueue<TReq, TAns, QUEUE_SIZE> {
@@ -191,24 +197,25 @@ mod request_queue {
                 }
             }
 
-            fn get_req_header(&self, req_id: RequestIdentifier) -> Option<QueueRequestHeader> {
+            pub(super) fn get_req_header(&self, req_id: RequestIdentifier) -> Option<RequestQueueReqHeader> {
                 let situation = self.id_situations_data.get_situation(req_id)?;
 
                 let location =
-                self.loc_info.id_to_location
-                .get(&req_id)
-                .used_in(|index| unsafe { index.unwrap_unchecked() })
-                .clone();
+                    self
+                    .loc_info.id_to_location
+                    .get(&req_id)
+                    .used_in(|index| unsafe { index.unwrap_unchecked() })
+                    .clone();
 
                 Some(
-                    QueueRequestHeader {
+                    RequestQueueReqHeader {
                         location,
                         situation,
                         id: req_id
                     }
                 )
             }
-            fn get_req(&self, req_id: RequestIdentifier) -> Option<Request<&TReq, &TAns>> {
+            pub(super) fn get_req(&self, req_id: RequestIdentifier) -> Option<Request<&TReq, &TAns>> {
                 let header =
                 self.get_req_header(req_id)?;
 
@@ -227,100 +234,143 @@ mod request_queue {
             }
         }
     }
-    pub fn make_client_endpoint(&self) -> RequestQueueClientEndpoint<TReq, TAns, QUEUE_SIZE> {
-        RequestQueueClientEndpoint { kernel_ref: self.kernel_node.make_ref() }
-    }
+    
+    use request_queue_internals::*;
+    pub mod request_queue_client{
+        use super::*;
 
-    pub fn make_server_endpoint(&self) -> RequestQueueServerEndpoint<TReq, TAns, QUEUE_SIZE> {
-        RequestQueueServerEndpoint { kernel_ref: self.kernel_node.make_ref() }
-    }
-
-    pub struct RequestQueueClientEndpointConn<'a, TReqQueueDeref, TReq, TAns, const QUEUE_SIZE: usize>
-        where TReqQueueDeref: Deref<Target=RequestQueueNode<> >
-    {
-        <'a,RequestQueueKernel<TReq, TAns, QUEUE_SIZE> >
-    }
-
-    impl<'a, TReq, TAns, const QUEUE_SIZE: usize> RequestQueueClientEndpoint<'a, TReq, TAns, QUEUE_SIZE> {
-        pub fn try_post_request(&mut self, req: TReq) -> Result<RequestIdentifier, TReq> {
-            let mut kernel_ref = match self.kernel_ref.try_borrow_mut() {
-                Ok(refl) => refl,
-                Err(_) => return Err(req)
-            };
-
-            let new_req_id = kernel_ref.last_identifier + 1;
-
-            let slot = {
-                let location = match kernel_ref.loc_info.get_open_loc(new_req_id).ok_or(()) {
-                    Ok(loc) => loc,
-                    Err(_) => { return Err(req) }
-                };
-
-                kernel_ref.queue_data.get_mut(location).unwrap()
-            };
-            *slot = MaybeUninit::new(RequestUnion { question: ManuallyDrop::new(req) });
-
-
-            unsafe {
-                kernel_ref.id_situations_data.set_situation_unchecked(
-                    new_req_id,
-                    None,
-                    Some(RequestSituation::Question(()))
-                );
+        impl<TReq, TAns, const QUEUE_SIZE: usize> RequestQueue<TReq, TAns, QUEUE_SIZE>{
+            pub fn make_client_endpoint(&self) -> RequestQueueClientEndpoint<TReq, TAns> {
+                RequestQueueClientEndpoint::new()
             }
+        } 
 
-            kernel_ref.last_identifier = new_req_id;
-            Ok(new_req_id)
+        pub struct RequestQueueClientEndpoint<TReq, TAns>{
+            current_req_id: Option<RequestIdentifier> ,
+            io_phantom:     PhantomData<(TReq, TAns)>
         }
 
-        pub fn try_take_answer(&mut self, req_id: RequestIdentifier) -> Result<Option<TAns>, QueueRequestQueryError> {
-            let mut kernel_ref = self.kernel_ref.try_borrow_mut()?;
-            let req_header =
-            kernel_ref.get_req_header(req_id).ok_or(QueueRequestQueryError::RequestNotFound)?;
+        impl<TReq, TAns> RequestQueueClientEndpoint<TReq, TAns> {
+            pub fn new() -> Self { 
+                Self {
+                    current_req_id: None,
+                    io_phantom: PhantomData{} 
+                } 
+            }
+            pub fn has_request(&self) -> bool {self.current_req_id.is_some()}
+            pub fn current_request_id(&self) -> &Option<RequestIdentifier>{&self.current_req_id}
+            pub fn current_request_id_mut(&mut self) -> &mut Option<RequestIdentifier>{&mut self.current_req_id}
+        }
 
-            if req_header.situation == Request::Answer(()) {
-                let value = unsafe {
-                    let value =
-                    kernel_ref.queue_data
-                    .get_unchecked(req_header.location)
-                    .assume_init_read()
-                    .answer
-                    .used_in(ManuallyDrop::<TAns>::into_inner);
+        pub struct RequestQueueClientEndpointConn<'a, TReqQueueDerefMut, TReq, TAns, const QUEUE_SIZE: usize>
+            where TReqQueueDerefMut: DerefMut<Target=RequestQueue<TReq, TAns, QUEUE_SIZE>> + 'a
+        {
+            queue:    TReqQueueDerefMut,
+            endpoint: &'a mut RequestQueueClientEndpoint<TReq, TAns>    
+        }
 
-                    kernel_ref.id_situations_data
-                    .set_situation(
-                        req_id,
-                        Some(RequestSituation::Answer(())),
+        impl<TReq, TAns> RequestQueueClientEndpoint<TReq, TAns> {
+            pub fn connect
+                <'a, TQueueDerefMut, const QUEUE_SIZE: usize>
+                (&mut self, queue: TQueueDerefMut) 
+                -> RequestQueueClientEndpointConn<'a, TQueueDerefMut, TReq, TAns, QUEUE_SIZE>
+                where TQueueDerefMut: DerefMut<Target=RequestQueue<TReq, TAns, QUEUE_SIZE>> + 'a 
+            {
+                RequestQueueClientEndpointConn{
+                    queue: queue, endpoint: self
+                }   
+            }
+        }
+
+        #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+        pub enum QueueRequestQueryError{
+            RequestNotFound
+        }
+
+        impl<'a, TQueueDerefMut, TReq, TAns, const QUEUE_SIZE: usize> 
+            RequestQueueClientEndpointConn<'a, TQueueDerefMut, TReq, TAns, QUEUE_SIZE> 
+            where TQueueDerefMut: DerefMut<Target=RequestQueue<TReq, TAns, QUEUE_SIZE>> + 'a 
+        {
+            pub fn try_post_request(&mut self, req: TReq) -> Result<(), TReq> {
+                let new_req_id = self.queue.last_identifier + 1;
+
+                let slot = {
+                    let location = match self.queue.loc_info.get_open_loc(new_req_id).ok_or(()) {
+                        Ok(loc) => loc,
+                        Err(_) => { return Err(req) }
+                    };
+
+                    self.queue.queue_data.get_mut(location).unwrap()
+                };
+
+                *slot = MaybeUninit::new(RequestQueueDataCellContent { question: ManuallyDrop::new(req) });
+
+                unsafe {
+                    self.queue.id_situations_data.set_situation(
+                        new_req_id,
                         None,
-                    )
-                    .unwrap()
-                    ;
+                        Some(RequestSituation::Question(()))
+                    );
+                }
 
-                    kernel_ref.loc_info.clear_loc(req_id);
-                    value
-                };
-                Ok(Some(value))
-            } else {
-                Ok(None)
+                self.queue.last_identifier = new_req_id;
+                self.endpoint.current_req_id = Some(new_req_id);
+                Ok(new_req_id)
+            }
+
+            pub fn try_take_answer(&mut self, req_id: RequestIdentifier) -> Result<Option<TAns>, QueueRequestQueryError> {
+                let req_header = self.queue.get_req_header(req_id).ok_or(QueueRequestQueryError::RequestNotFound)?;
+
+                if req_header.situation == Request::Answer(()) {
+                    let value = unsafe {
+                        let value =
+                            self.queue.queue_data
+                            .get_unchecked(req_header.location)
+                            .assume_init_read()
+                            .answer
+                            .used_in(ManuallyDrop::<TAns>::into_inner);
+
+                        self.queue.id_situations_data
+                        .set_situation(
+                            req_id,
+                            Some(RequestSituation::Answer(())),
+                            None,
+                        )
+                        .unwrap();
+
+                        self.queue.loc_info.clear_loc(req_id);
+                        value
+                    };
+                    Ok(Some(value))
+                } else {
+                    Ok(None)
+                }
+            }
+            pub fn is_ready(&self, req_id: RequestIdentifier) -> Result<bool, QueueRequestQueryError> {
+                Ok(self.queue.get_req(req_id).ok_or(QueueRequestQueryError::RequestNotFound)?.has_answer())
             }
         }
-        pub fn is_ready(&self, req_id: RequestIdentifier) -> Result<bool, QueueRequestQueryError> {
-            let kernel_ref = self.kernel_ref.try_borrow()?;
+    }
+    pub use request_queue_client::*;
 
-            Ok(kernel_ref.get_req(req_id).ok_or(RequestNotFound)?.has_answer())
-        }
+    pub mod request_queue_server{
+        pub use super::*;
+        // impl RequestQueue<>
+        // pub fn make_server_endpoint(&self) -> RequestQueueServerEndpoint<TReq, TAns> {
+        //         RequestQueueServerEndpoint { kernel_ref: self.kernel_node.make_ref() }
+        //     }
+        // }
 
-
-        pub struct RequestQueueServerEndpoint<'a, TReq, TAns, const QUEUE_SIZE: usize> {
-            kernel_ref: NodeRef<'a, RequestQueue<TReq, TAns, QUEUE_SIZE>>
+        pub struct RequestQueueServerEndpoint<TReq, TAns> {
+            current_request_
         }
         pub enum PutAnswerError {
             WeirdRequestId
         }
         impl<'a, TReq, TAns, const QUEUE_SIZE: usize> RequestQueueServerEndpoint<'a, TReq, TAns, QUEUE_SIZE> {
             pub fn get_question(&mut self) -> Result<Option<(RequestIdentifier, TReq)>, NodeBorrowError> {
-                let mut kernel_ref = self.kernel_ref.try_borrow_mut()?;
-                let data = kernel_ref.id_situations_data.question_ids.first().cloned().map(|req_id| {
+
+                let data = self.queue.id_situations_data.question_ids.first().cloned().map(|req_id| {
                     let req = unsafe {
                         let loc = kernel_ref.loc_info.id_to_location.get(&req_id).unwrap().clone();
                         let slot = kernel_ref.queue_data.get_unchecked_mut(loc);
