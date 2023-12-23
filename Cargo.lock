@@ -129,7 +129,47 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8d5439c4ad607c3c23abf66de8c8bf57ba8adcd1f129e699851a6e43935d339d"
 
 [[package]]
-name = "nodes"
+name = "nnp_base"
+version = "0.1.0"
+dependencies = [
+ "nnp_base_core",
+ "nnp_base_runner",
+]
+
+[[package]]
+name = "nnp_base_core"
+version = "0.1.0"
+
+[[package]]
+name = "nnp_base_runner"
+version = "0.1.0"
+dependencies = [
+ "nnp_base_runner_deps",
+ "nnp_base_runner_macros",
+]
+
+[[package]]
+name = "nnp_base_runner_deps"
+version = "0.1.0"
+dependencies = [
+ "heapless",
+ "nnp_base_core",
+]
+
+[[package]]
+name = "nnp_base_runner_macros"
+version = "0.1.0"
+dependencies = [
+ "heapless",
+ "log",
+ "nnp_base_core",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "nodes_n_procs"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -139,41 +179,8 @@ dependencies = [
  "fixed",
  "heapless",
  "nb 1.1.0",
- "nodes_base",
+ "nnp_base",
  "num-traits",
-]
-
-[[package]]
-name = "nodes_base"
-version = "0.1.0"
-dependencies = [
- "nodes_base_nodes",
- "nodes_base_runner_deps",
- "nodes_base_runner_macro",
-]
-
-[[package]]
-name = "nodes_base_nodes"
-version = "0.1.0"
-
-[[package]]
-name = "nodes_base_runner_deps"
-version = "0.1.0"
-dependencies = [
- "heapless",
- "nodes_base_nodes",
-]
-
-[[package]]
-name = "nodes_base_runner_macro"
-version = "0.1.0"
-dependencies = [
- "heapless",
- "log",
- "nodes_base_nodes",
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]

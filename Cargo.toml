@@ -1,4 +1,11 @@
 [workspace]
-members=["nodes", "nodes_base/nodes_base_runner/nodes_base_runner_macro", "nodes_base/nodes_base_runner/nodes_base_runner_deps", "nodes_base/nodes_base_nodes", "nodes_base"]
-default-members=["nodes"]
+members=[
+	"nodes_n_procs",
+	"nnp_base",
+	"nnp_base/nnp_base_core", 
+	"nnp_base/nnp_base_runner",
+	"nnp_base/nnp_base_runner/runner_macros",
+	"nnp_base/nnp_base_runner/runner_deps",
+]
+default-members=["nodes_n_procs"]
 

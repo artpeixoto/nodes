@@ -1,0 +1,10 @@
+[package]
+name = "nnp_base_runner"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+nnp_base_runner_macros = {path="./runner_macros"}
+nnp_base_runner_deps  = {path="./runner_deps"}
+
