@@ -6,8 +6,8 @@
     error_in_core,
 )]
 #![feature(inherent_associated_types)]
-#![feature(coroutine_trait)]
-#![feature(coroutines)]
+// #![feature(coroutine_trait)]
+// #![feature(coroutines)]
 extern crate alloc;
 
 pub mod base{
