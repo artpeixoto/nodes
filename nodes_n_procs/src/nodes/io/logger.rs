@@ -8,11 +8,8 @@ use crate::signals::activation_signal::ActivationSignalNRef;
 
 
 pub type LogQueue<const QUEUE_SIZE: usize> = Queue<String, QUEUE_SIZE>;
-
 pub type LogQueueNode<const MSG_QUEUE_SIZE: usize> = Node<LogQueue<MSG_QUEUE_SIZE>>;
-
 pub type LogQueueNodeRef<'a, const MSG_QUEUE_SIZE: usize> = <LogQueueNode<MSG_QUEUE_SIZE> as TryDeref>::TRef<'a>;
-
 pub type LogQueueNMut<'a, const MSG_QUEUE_SIZE: usize> = <LogQueueNode<MSG_QUEUE_SIZE> as TryDerefMut>::TMut<'a>;
 
 
@@ -22,9 +19,10 @@ pub struct LogWriter<TWrite: Write, const msg_queue_size: usize>{
 }
 
 
-impl<TWrite: Write, const msg_queue_size: usize> Process for LogWriter<TWrite, msg_queue_size>
+impl<TWrite: Write, const MSG_QUEUE_SIZE: usize> 
+	Process for LogWriter<TWrite, MSG_QUEUE_SIZE>
 {
-	type TArgs<'args>  = LogQueueNMut<'args, msg_queue_size>;
+	type TArgs<'args>  = LogQueueNMut<'args, MSG_QUEUE_SIZE>;
     fn resume<'a>(&mut self, _msg_queue: Self::TArgs<'a>) 
 	{
 		let can_take_string = {

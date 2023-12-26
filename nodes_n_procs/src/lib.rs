@@ -6,10 +6,9 @@
     error_in_core,
 )]
 #![feature(inherent_associated_types)]
-
+#![feature(coroutine_trait)]
+#![feature(coroutines)]
 extern crate alloc;
-extern crate heapless;
-extern crate either;
 
 pub mod base{
     extern crate nnp_base;

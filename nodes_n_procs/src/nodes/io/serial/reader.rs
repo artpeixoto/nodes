@@ -9,16 +9,16 @@ use heapless::spsc::Queue;
 use crate::base::proc::Process;
 use crate::queue::queue_node::QueueNMut;
 
-pub struct ReaderProc<Word, Reader, const buffer_size: usize>
+pub struct ReaderProc<Word, Reader, const BUFFER_SIZE: usize>
 	where Reader: Read<Word>
 {
 	reader: Reader,
-	output_phantom: PhantomData<Queue<Word, buffer_size>>,
+	output_phantom: PhantomData<Queue<Word, BUFFER_SIZE>>,
 }
 
 
-impl< Word, TReader, const buffer_size: usize>
-	ReaderProc< Word, TReader, buffer_size>
+impl< Word, TReader, const BUFFER_SIZE: usize>
+	ReaderProc< Word, TReader, BUFFER_SIZE>
 	where
 		TReader: Read<Word>,
 		TReader::Error 	: Error + 'static
@@ -29,9 +29,10 @@ impl< Word, TReader, const buffer_size: usize>
 			output_phantom: PhantomData{}
 		}
 	}
-	fn read (
+
+	pub fn read (
 		&mut self,
-		mut output: impl DerefMut<Target=Queue<Word, buffer_size>>,
+		mut output: impl DerefMut<Target=Queue<Word, BUFFER_SIZE>>,
 	) -> usize {
 		let input_iter =
 			from_fn(|| self.reader.read().ok())
@@ -59,8 +60,6 @@ impl<Word, Reader, const buffer_size: usize>
 
 	fn resume<'args>(&mut self, output: Self::TArgs<'args>) 
 	{
-		self.read(
-			output
-		);
+		self.read(output);
 	}
 }

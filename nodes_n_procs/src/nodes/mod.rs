@@ -6,3 +6,4 @@ pub mod timing;
 pub mod sampling;
 pub mod queue;
 pub mod signals;
+pub mod procs_wrappers;
