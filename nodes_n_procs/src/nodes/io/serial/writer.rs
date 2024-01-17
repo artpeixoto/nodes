@@ -1,44 +1,37 @@
 use core::marker::PhantomData;
-use embedded_hal::serial::Write;
+use embedded_io::{Write, WriteReady};
 use crate::base::proc::Process;
 use crate::queue::queue_node::QueueNMut;
 
-pub struct WriterProc<const input_buffer_size: usize, TWord:Clone, TWriter: Write<TWord>>
+pub struct WriterProc<const input_buffer_size: usize, TWriter: Write + WriteReady>
 {
     writer:     TWriter,
-    _phantom:   PhantomData<TWord>,
 }
 
-impl< const input_buffer_size: usize, TWord, TWriter>
-    Process for WriterProc< input_buffer_size, TWord, TWriter>
+impl< const input_buffer_size: usize, TWriter>
+    Process for WriterProc< input_buffer_size,  TWriter>
     where
-        TWord: Clone,
-        TWriter: Write<TWord>,
-        for<'a> TWord: 'a,
+        TWriter: Write + WriteReady,
 {
-    type TArgs<'args>
-        = QueueNMut<'args, TWord, input_buffer_size>
-        ;
-
+    type TArgs<'args> = QueueNMut<'args, u8, input_buffer_size>;
     fn resume<'args>(&mut self, mut inputs: Self::TArgs<'args>) {
         let _initial_inputs_size = inputs.len();
-        while let Some(input) = inputs.peek(){
-            match self.writer.write(input.clone()){
-                Ok(_)   => unsafe { inputs.dequeue_unchecked(); }
-                Err(_)  => { break; }
+        while let (Some(input), true) = (inputs.peek(), self.writer.write_ready().unwrap()){
+            match self.writer.write(&[input.clone()]).unwrap(){
+                1   => unsafe { inputs.dequeue_unchecked(); }
+                _   => {break;}
             }
         }
     }
 }
 
 
-impl< const input_buffer_size: usize, TWord: Clone, TWriter: Write<TWord>>
-    WriterProc< input_buffer_size, TWord, TWriter>
+impl< const input_buffer_size: usize, TWriter: Write + WriteReady>
+    WriterProc< input_buffer_size,  TWriter>
 {
     pub fn new(writer: TWriter) -> Self {
         Self{
             writer,
-            _phantom: PhantomData{}
         }
     }
 }

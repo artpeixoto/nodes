@@ -1,10 +1,7 @@
+type DurationType  		= fixed::types::I40F24;
+type SmallDurationType 	= fixed::types::I10F22; // apenas para 1024 sec ou menos. 
+type TimeType      		= fixed::types::U40F24;
 
-
-
-
-
-type DurationType  	= fixed::types::I40F24;
-type TimeType      	= fixed::types::U40F24;
 pub type Duration 	= DurationType;
 pub type Time 		= TimeType;
 

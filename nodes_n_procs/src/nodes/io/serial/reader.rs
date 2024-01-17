@@ -1,26 +1,27 @@
+use core::borrow::Borrow;
 use core::error::Error;
 use core::iter::from_fn;
 use core::marker::PhantomData;
 use core::ops::DerefMut;
 
-use embedded_hal::serial::Read;
-use heapless::Deque;
+use embedded_io::{ReadReady, Read};
+use heapless::{Deque, Vec};
 use heapless::spsc::Queue;
 use crate::base::proc::Process;
 use crate::queue::queue_node::QueueNMut;
 
-pub struct ReaderProc<Word, Reader, const BUFFER_SIZE: usize>
-	where Reader: Read<Word>
+pub struct ReaderProc<Reader, const BUFFER_SIZE: usize>
+	where Reader: ReadReady + Read
 {
 	reader: Reader,
-	output_phantom: PhantomData<Queue<Word, BUFFER_SIZE>>,
+	output_phantom: PhantomData<Queue<u8, BUFFER_SIZE>>,
 }
 
 
-impl< Word, TReader, const BUFFER_SIZE: usize>
-	ReaderProc< Word, TReader, BUFFER_SIZE>
+impl<TReader, const BUFFER_SIZE: usize>
+	ReaderProc<TReader, BUFFER_SIZE>
 	where
-		TReader: Read<Word>,
+		TReader: ReadReady + Read,
 		TReader::Error 	: Error + 'static
 {
 	pub fn new( reader: TReader ) -> Self{
@@ -32,31 +33,34 @@ impl< Word, TReader, const BUFFER_SIZE: usize>
 
 	pub fn read (
 		&mut self,
-		mut output: impl DerefMut<Target=Queue<Word, BUFFER_SIZE>>,
+		mut output: impl DerefMut<Target=Queue<u8, BUFFER_SIZE>>,
 	) -> usize {
-		let input_iter =
-			from_fn(|| self.reader.read().ok())
-			.fuse()
-			.take(output.capacity() - output.len());
+		if self.reader.read_ready().unwrap() && !output.is_full(){
+			let mut buf = Vec::<u8, BUFFER_SIZE>::new();
+			let buf_ref = &mut buf[0..(output.capacity() - output.len())];
 
-		let mut read_count: usize = 0;
-		for input in input_iter{
-			read_count += 1;
-			unsafe{ output.enqueue_unchecked(input); }
+			let read_count = self.reader.read(buf_ref).unwrap();
+			let output_producer = output.split().0;
+
+			for byte in &buf_ref[0..read_count]{
+				unsafe{ output.enqueue_unchecked(*byte); }
+			}
+
+			read_count
+		} else {
+			0
 		}
-		read_count
 	}
 }
 
-impl<Word, Reader, const buffer_size: usize>
-	Process for ReaderProc< Word, Reader, buffer_size>
+impl< Reader, const buffer_size: usize>
+	Process for ReaderProc<  Reader, buffer_size>
 	where
-	 	for<'a> Word	:'a,
-		Reader			: Read<Word>,
+		Reader			: ReadReady + Read,
 		Reader::Error	: Error + 'static
 {
 	type TArgs<'args>  
-		= QueueNMut<'args, Word, buffer_size>;
+		= QueueNMut<'args, u8, buffer_size>;
 
 	fn resume<'args>(&mut self, output: Self::TArgs<'args>) 
 	{

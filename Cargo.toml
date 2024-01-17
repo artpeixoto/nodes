@@ -7,5 +7,7 @@ members=[
 	"nnp_base/nnp_base_runner/runner_macros",
 	"nnp_base/nnp_base_runner/runner_deps",
 ]
+
 default-members=["nodes_n_procs"]
 
+resolver = "2"

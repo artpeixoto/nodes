@@ -1,4 +1,4 @@
-use core::{cell::{RefCell}};
+use core::{cell::{RefCell, UnsafeCell}, borrow::Borrow};
 use core::error::Error;
 
 pub use crate::extensions::try_deref::TryDeref;
@@ -6,25 +6,22 @@ pub use crate::extensions::try_deref::TryDerefMut;
 pub use core::ops::Deref;
 pub use core::ops::DerefMut;
 
-
 pub struct Node<T> {
-	ref_item:	RefCell<T>,
+	ref_item:	UnsafeCell<T>,
 }
 
 impl<T> Node<T>{
 	pub fn new(value: T) -> Self{
 		Self {
-			ref_item: RefCell::new(value) 
+			ref_item: UnsafeCell::new(value) 
 		}
 	}
 }
 
 pub mod node_borrow_error{
-
     use core::cell::{BorrowError, BorrowMutError};
     use core::error::Error;
     use core::fmt::{Debug, Display, Formatter};
-	
 
     pub enum NodeBorrowError{
         BorrowError(BorrowError),
@@ -73,12 +70,13 @@ mod node_ref{
 	use super::*;	
     use core::{cell::Ref};
 	pub struct NodeRef<'a, T> where T: 'a{
-		pub(super) cell_ref: Ref<'a, T>
+		pub(super) cell_ref: &'a T
 	}
 
 	impl<'a, T> Deref for NodeRef<'a, T> where T: 'a{
 		type Target = T;
 
+		#[inline]
 		fn deref(&self) -> &Self::Target {
 			self.cell_ref.deref()
 		}
@@ -98,21 +96,26 @@ pub mod node_ref_mut{
 		pub fn new() -> Self{
 			Self{has_changed: false}
 		}
+		#[inline]
 		pub fn inform_changes_happened(&mut self) {
 			self.has_changed = true;
 		}
-		pub fn has_changed(&self) -> bool{
+
+		#[inline]
+		pub const fn has_changed(&self) -> bool{
 			self.has_changed
 		}
 	}
 	pub struct NodeRefMut<'cell_ref, T> 
 		where T: 'cell_ref
 	{
-		pub(super) cell_ref			: RefMut<'cell_ref, T>,
+		pub(super) cell_ref			: & 'cell_ref mut T,
 		pub(super) change_detector	: Option<&'cell_ref mut ChangeDetector>,
 	}
 
 	impl<'cell_ref, T> NodeRefMut<'cell_ref, T>{
+
+		#[inline(always)]
 		pub fn add_change_detector(&mut self, change_detector: &'cell_ref mut ChangeDetector)
 		{
 			self.change_detector = Some(change_detector)
@@ -121,12 +124,14 @@ pub mod node_ref_mut{
 
 	impl<'a, T> Deref for NodeRefMut<'a, T>{
 		type Target = T;
+		#[inline]
 		fn deref(&self) -> &Self::Target {
 			self.cell_ref.deref()
 		}
 	}
 
 	impl<'a, T> DerefMut for NodeRefMut<'a,T>{
+		#[inline]
 		fn deref_mut(&mut self) -> &mut Self::Target {
 			self.change_detector.as_deref_mut().map(|change_detector| change_detector.inform_changes_happened());
 			self.cell_ref.deref_mut()
@@ -141,7 +146,7 @@ impl<T> TryDeref for Node<T>{
 	type TTryDerefError = node_borrow_error::NodeBorrowError;
 
 	fn try_deref<'a>(&'a self) -> Result<Self::TRef<'a>, Self::TTryDerefError> {
-		let cell_ref = self.ref_item.try_borrow()?;
+		let cell_ref = unsafe{self.ref_item.get().as_ref().unwrap()};
 		Ok(NodeRef {cell_ref})
 	}
 }
@@ -151,7 +156,7 @@ impl<T> TryDerefMut for Node<T>{
 	type TTryDerefMutError = NodeBorrowError;
 
 	fn try_deref_mut<'a>(&'a self) -> Result<Self::TMut<'a>, Self::TTryDerefMutError> {
-		let cell_ref = self.ref_item.try_borrow_mut()?;
+		let cell_ref = unsafe{self.ref_item.get().as_mut().unwrap_unchecked()};
 		Ok(NodeRefMut {cell_ref , change_detector: None})
 	}
 }

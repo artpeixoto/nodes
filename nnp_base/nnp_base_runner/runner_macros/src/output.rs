@@ -113,9 +113,10 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
     };
 
     let (nodes_ids_defn_ts, nodes_ids_construction_ts, nodes_ids_types, nodes_ids_keys) = {
+        pub type NodeIdKey = u16;
         let nodes_ids_type_defn =
             quote! (
-                type NodeIdKey = usize;
+                type NodeIdKey = u16;
 
                 #[derive(Clone, Copy, Default)]
                 struct NodeId<const NODE_ID: NodeIdKey> {}
@@ -138,8 +139,9 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
                 .enumerate()
                 .map(|(ix, node_ix )| {
                     let node_field = nodes_fields[node_ix];
+                    let node_id_key = ix as NodeIdKey;
                     quote!(
-                        pub const #node_field: NodeIdKey = #ix;
+                        pub const #node_field: NodeIdKey = #node_id_key;
                     )
                 });
 
@@ -235,6 +237,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
                 quote! {
                     impl OpensRef<#node_id_type> for Nodes{
                         type TRet = #node_type;
+
                         fn get_ref(&self, key: &#node_id_type) -> &Self::TRet{
                             &self.#node_ident
                         }
@@ -275,9 +278,10 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
     };
 
     let (procs_ids_struct_defn_ts, procs_ids_types, procs_ids_keys) = {
+        type ProcIdKey = u16;
         let proc_ids_struct_defn_ts =
             quote! {
-                type ProcIdKey = usize;
+                type ProcIdKey = u16;
                 #[derive(Clone, Copy, Default)]
                 struct ProcId<const KEY: ProcIdKey>{}
             };
@@ -286,7 +290,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
             procs_indexes
             .iter()
             .map(|index| {
-                (index, quote! {ProcId<#index>})
+                (index, {let u8_index = *index as ProcIdKey; quote! {ProcId<#u8_index>}})
             })
             .used_in(HashMap::<_, _, RandomState>::from_iter);
 
@@ -294,7 +298,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
             procs
             .iter()
             .enumerate()
-            .map(|(index, proc)| (index, quote! {#index}))
+            .map(|(index, proc)| (index, {let u8_index = index as ProcIdKey; quote! {#u8_index}}))
             .used_in(HashMap::<_, _, RandomState>::from_iter);
         (proc_ids_struct_defn_ts, procs_ids_types, procs_ids_keys)
     };
@@ -474,6 +478,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
 
                         impl OpensRef<#node_id_type> for NodesDependants{
                             type TRet = &'static [ProcIdKey];
+                            #[inline(always)]
                             fn get_ref(&self, key: &#node_id_type) -> &Self::TRet{
                                 &NodesDependants::#node_name
                             }

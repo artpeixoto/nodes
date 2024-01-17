@@ -1,1 +1,4 @@
-//pub mod coroutines;
+#[cfg(feature="corroutines")]
+pub mod coroutines;
+
+pub mod fns;

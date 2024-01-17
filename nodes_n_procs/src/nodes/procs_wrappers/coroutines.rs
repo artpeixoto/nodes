@@ -1,3 +1,4 @@
+#![feature(corroutines, corroutine_trait)]
 use core::{ops::{Coroutine, DerefMut}, pin::{Pin, self}, marker::PhantomData};
 use crate::base::proc::Process;
 pub struct CoroutineWrapper<TCorr, TCorrDeref, TArgs> 

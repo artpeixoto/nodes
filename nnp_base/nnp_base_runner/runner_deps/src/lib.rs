@@ -7,14 +7,19 @@ pub mod build_runner_deps{
 
     pub mod opens {
         pub trait OpensMut<TKey>: OpensRef<TKey> {
+
+            #[inline(always)]
             fn get_mut(&mut self, key: &TKey) -> &mut Self::TRet;
         }
 
         pub trait OpensRef<TKey> {
             type TRet;
+
+            #[inline(always)]
             fn get_ref(&self, key: &TKey) -> &Self::TRet;
         }
     }
+
 
     pub use opens::*;
 }
