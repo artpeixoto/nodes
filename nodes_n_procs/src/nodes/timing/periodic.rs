@@ -66,10 +66,10 @@ pub mod cycles_keeper{
 }
 pub struct PeriodicCyclesProcess(pub CyclesKeeper);
 
-impl Process for PeriodicCyclesProcess {
-    type TArgs<'args>  = (NodeRef<'args, Time>, NodeRefMut<'args, u64>) where Self: 'args;
+impl<'a> Process<'a> for PeriodicCyclesProcess {
+    type TArgs  = (NodeRef<'a, Time>, NodeRefMut<'a, u64>);
 
-    fn resume<'args>(&mut self, (current_time,mut cycles_count): Self::TArgs<'args>) {
+    fn resume(&mut self, (current_time,mut cycles_count): Self::TArgs) {
         let cycles_counted = self.0.update(&current_time);
         if cycles_counted > 0 {
             *(cycles_count.deref_mut()) += cycles_counted as u64;
@@ -78,10 +78,10 @@ impl Process for PeriodicCyclesProcess {
 }
 pub struct PeriodicImpulseProc(pub CyclesKeeper);
 
-impl Process for PeriodicImpulseProc{
-    type TArgs<'args>  = (NodeRef<'args, Duration>, NodeRef<'args, Time>,  NodeRefMut<'args, ActivationSignal>) where Self: 'args;
+impl<'a> Process<'a> for PeriodicImpulseProc{
+    type TArgs  = (NodeRef<'a, Duration>, NodeRef<'a, Time>,  NodeRefMut<'a, ActivationSignal>);
 
-    fn resume<'args>(&mut self, (duration, current_time, mut activation_signal): Self::TArgs<'args>) {
+    fn resume(&mut self, (duration, current_time, mut activation_signal): Self::TArgs) {
         self.0.update_cycle_duration(duration.deref());
         let cycles_count = self.0.update(&current_time);
         if cycles_count > 0{

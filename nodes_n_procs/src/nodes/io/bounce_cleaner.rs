@@ -8,11 +8,11 @@ pub struct BounceCleaner<const sample_queue_size: usize> {
 }
 
 
-impl<const SAMPLE_QUEUE_SIZE: usize>
-	Process for BounceCleaner<SAMPLE_QUEUE_SIZE>
+impl<'a, const SAMPLE_QUEUE_SIZE: usize>
+	Process<'a> for BounceCleaner<SAMPLE_QUEUE_SIZE>
 {
-	type TArgs<'a>  = (SampleHistoryNRef<'a, DigitalValue, SAMPLE_QUEUE_SIZE>, NodeRefMut<'a, DigitalValue>) where Self: 'a;
-    fn resume<'a>(&mut self, (sample_history, mut output) : Self::TArgs<'a>){
+	type TArgs  = (SampleHistoryNRef<'a, DigitalValue, SAMPLE_QUEUE_SIZE>, NodeRefMut<'a, DigitalValue>);
+    fn resume(&mut self, (sample_history, mut output) : Self::TArgs){
         if sample_history.last_full_index() > self.last_full_index{
 			*output = DigitalValue::from({
 				let high_samples_count: usize =

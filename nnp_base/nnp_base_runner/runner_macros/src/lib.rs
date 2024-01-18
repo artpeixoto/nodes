@@ -1,5 +1,4 @@
 #![feature(proc_macro_quote)]
-
 mod output;
 mod input;
 mod test;

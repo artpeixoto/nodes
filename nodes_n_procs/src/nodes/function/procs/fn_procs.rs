@@ -11,21 +11,21 @@ pub mod unary_func{
         io_phantom: PhantomData<(TInput, TOutput)>
     }
 
-    impl<TInput, TOutput, TFunc>
-        Process for UnaryFunc<TInput, TOutput, TFunc>
+    impl<'a, TInput, TOutput, TFunc>
+        Process<'a> for UnaryFunc<TInput, TOutput, TFunc>
         where 
             TFunc: FnMut(&TInput) -> TOutput,
-            for<'a> TInput: 'a,
-            for<'a> TOutput: 'a,
+            TInput: 'a,
+            TOutput: 'a,
     {
-        type TArgs<'a> = (
+        type TArgs = (
             NodeRef<'a, TInput>,
             NodeRefMut<'a, TOutput>
         );
 
-        fn resume<'a>(
+        fn resume(
             &mut self, 
-            (input, mut output): Self::TArgs<'a>
+            (input, mut output): Self::TArgs
         ) {
             let new_output = (self.func)(&input);
             *output = new_output;
@@ -48,18 +48,22 @@ pub mod binary_func {
     }
 
 
-    impl<TInput0, TInput1, TOutput, TFunc> Process for BinaryFunc<TInput0, TInput1, TOutput, TFunc>
+    impl<'a, TInput0, TInput1, TOutput, TFunc> Process<'a> for BinaryFunc<TInput0, TInput1, TOutput, TFunc>
         where 	
             TFunc: FnMut(&TInput0, &TInput1) -> TOutput, 
-            for<'a> TInput0: 'a,
-            for<'a> TInput1: 'a,
-            for<'a> TOutput: 'a,
+            TInput0: 'a,
+            TInput1: 'a,
+            TOutput: 'a,
     {
-        type TArgs<'a> = (NodeRef<'a, TInput0>, NodeRef<'a, TInput1>, NodeRefMut<'a, TOutput>);
+        type TArgs = (
+            NodeRef<'a, TInput0>,
+            NodeRef<'a, TInput1>, 
+            NodeRefMut<'a, TOutput>
+        );
 
-        fn resume<'a>(
+        fn resume(
             &mut self,
-            (input_0, input_1, mut output_dest): Self::TArgs<'a>
+            (input_0, input_1, mut output_dest): Self::TArgs
         ) {
             *output_dest = (self.func)(&input_0, &input_1);
         }

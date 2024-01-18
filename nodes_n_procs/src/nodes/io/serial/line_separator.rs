@@ -8,12 +8,12 @@ pub struct LineSeparator<const OUTPUT_BUFFER_SIZE: usize, const INPUT_BUFFER_SIZ
 	string_buffer: String,
 }
 
-impl<const OUTPUT_BUFFER_SIZE: usize, const INPUT_BUFFER_SIZE: usize> 
-	Process for LineSeparator<OUTPUT_BUFFER_SIZE, INPUT_BUFFER_SIZE>
+impl<'a, const OUTPUT_BUFFER_SIZE: usize, const INPUT_BUFFER_SIZE: usize> 
+	Process<'a> for LineSeparator<OUTPUT_BUFFER_SIZE, INPUT_BUFFER_SIZE>
 {
-	type TArgs<'args>  = (QueueNMut<'args, char, INPUT_BUFFER_SIZE>, QueueNMut<'args, String, OUTPUT_BUFFER_SIZE>) where Self: 'args;
+	type TArgs  = (QueueNMut<'a, char, INPUT_BUFFER_SIZE>, QueueNMut<'a, String, OUTPUT_BUFFER_SIZE>) ;
 
-	fn resume<'args>(&mut self, (chars_input, lines_output): Self::TArgs<'args>) {
+	fn resume(&mut self, (chars_input, lines_output): Self::TArgs) {
 		self.read_many(chars_input, lines_output);
 	}
 }

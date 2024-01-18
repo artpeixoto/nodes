@@ -5,9 +5,9 @@ pub struct SpinCounter {}
 impl SpinCounter{
     pub fn new() -> Self{Self{}}
 }
-impl Process for SpinCounter{
-    type TArgs<'args>  = NodeRefMut<'args, u64>;
-    fn resume<'args>(&mut self, mut cycles_count: Self::TArgs<'args>) {
+impl<'a> Process<'a> for SpinCounter{
+    type TArgs  = NodeRefMut<'a, u64>;
+    fn resume(&mut self, mut cycles_count: Self::TArgs) {
         *cycles_count += 1;
     }
 }

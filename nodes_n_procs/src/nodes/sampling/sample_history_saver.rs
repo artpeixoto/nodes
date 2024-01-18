@@ -8,13 +8,13 @@ use super::SampleHistoryNMut;
 
 pub struct SampleHistorySaver<T:Clone, const history_size: usize>(PhantomData<T>);
 
-impl<T:Clone, const history_size: usize>
-    Process for SampleHistorySaver<T, history_size>
+impl<'a, T:Clone, const history_size: usize>
+    Process<'a> for SampleHistorySaver<T, history_size>
     where 
-        for<'a>  T: 'a
+         T: 'a
 {
-    type TArgs<'a>  = (SampleNRef<'a, T>, SampleHistoryNMut<'a, T, history_size>);
-    fn resume<'a>(&mut self, (sample, mut sample_history): Self::TArgs<'a>){
+    type TArgs  = (SampleNRef<'a, T>, SampleHistoryNMut<'a, T, history_size>);
+    fn resume(&mut self, (sample, mut sample_history): Self::TArgs){
         if let Some(sample) = sample.deref(){
             sample_history.push_sample(sample.clone());
         }

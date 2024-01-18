@@ -24,13 +24,13 @@ impl<TCorr, TCorrDeref, TArgs>
 
 
 impl<TCorr, TCorrDeref, TArgs> 
-	Process for CoroutineWrapper<TCorr, TCorrDeref, TArgs>
+	Process<'a> for CoroutineWrapper<TCorr, TCorrDeref, TArgs>
 	where 
 		TCorr: Coroutine<TArgs>,
 		TCorrDeref: DerefMut<Target=TCorr>, 
 {
-    type TArgs<'a> = TArgs;
-    fn resume<'a>(&mut self, args: Self::TArgs<'a>) {
+    type TArgs = TArgs;
+    fn resume(&mut self, args: Self::TArgs) {
 		use core::ops::CoroutineState::*;
 		match  self.coroutine.as_mut().resume(args){
     		Yielded(yielded) 	=> {},	

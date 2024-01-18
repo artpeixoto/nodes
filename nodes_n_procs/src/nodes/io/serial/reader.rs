@@ -53,16 +53,16 @@ impl<TReader, const BUFFER_SIZE: usize>
 	}
 }
 
-impl< Reader, const buffer_size: usize>
-	Process for ReaderProc<  Reader, buffer_size>
+impl<'a, Reader, const buffer_size: usize>
+	Process<'a> for ReaderProc<  Reader, buffer_size>
 	where
 		Reader			: ReadReady + Read,
 		Reader::Error	: Error + 'static
 {
-	type TArgs<'args>  
-		= QueueNMut<'args, u8, buffer_size>;
+	type TArgs  
+		= QueueNMut<'a, u8, buffer_size>;
 
-	fn resume<'args>(&mut self, output: Self::TArgs<'args>) 
+	fn resume(&mut self, output: Self::TArgs) 
 	{
 		self.read(output);
 	}

@@ -15,10 +15,10 @@ impl< T: Clone> SampleLatcher<T> {
 	}
 }
 
-impl<TValue:Clone> Process for SampleLatcher<TValue> where for<'a> TValue: 'a
+impl<'a, TValue:Clone> Process<'a> for SampleLatcher<TValue> where TValue: 'a
 {
-	type TArgs<'a> = (SampleNRef<'a, TValue>, NodeRefMut<'a, TValue>);
-    fn resume<'a>(&mut self, (sample_input,mut latch_output): Self::TArgs<'a>) {
+	type TArgs = (SampleNRef<'a, TValue>, NodeRefMut<'a, TValue>);
+    fn resume(&mut self, (sample_input,mut latch_output): Self::TArgs) {
 		if let Some(sample_value) = sample_input.deref(){
 			*latch_output = sample_value.clone()
 		}

@@ -1,9 +1,4 @@
-
-
-pub trait Process{
-    type TArgs<'a>;
-    fn resume<'a>(&mut self, args: Self::TArgs<'a>);
+pub trait Process<'a>{
+    type TArgs: 'a;
+    fn resume(&mut self, args: Self::TArgs);
 }
-
-
-

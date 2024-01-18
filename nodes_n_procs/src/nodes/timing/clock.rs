@@ -32,12 +32,12 @@ impl< TTimeGetter: TimeGetter> ClockProcess< TTimeGetter>
 }
 
 
-impl<TTimeGetter: TimeGetter> Process for ClockProcess<TTimeGetter>
+impl<'a, TTimeGetter: TimeGetter> Process<'a> for ClockProcess<TTimeGetter>
 {
-    type TArgs<'args>
-        = ClockNMut<'args>;
+    type TArgs
+        = ClockNMut<'a>;
 
-    fn resume<'a>(&mut self, mut clock_reading: Self::TArgs<'a>)
+    fn resume(&mut self, mut clock_reading: Self::TArgs)
     {
         let current_time = self.time_getter.borrow_mut().get_current_time();
 
@@ -55,10 +55,10 @@ impl DeltaTimeProcess {
     }
 }
 
-impl Process for DeltaTimeProcess{
-    type TArgs<'args>  = (ClockNRef<'args>, NodeRefMut<'args, Duration>) where Self: 'args;
+impl<'a> Process<'a> for DeltaTimeProcess{
+    type TArgs  = (ClockNRef<'a>, NodeRefMut<'a, Duration>);
 
-    fn resume<'args>(&mut self, (clock_node, mut output): Self::TArgs<'args>) {
+    fn resume(&mut self, (clock_node, mut output): Self::TArgs) {
         let current_time_reading : &Time = clock_node.deref();
         if let Some(previous_time_reading) = &self.previous_time_reading{
             *output = (current_time_reading - previous_time_reading).to_num();

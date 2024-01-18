@@ -8,13 +8,13 @@ pub struct WriterProc<const input_buffer_size: usize, TWriter: Write + WriteRead
     writer:     TWriter,
 }
 
-impl< const input_buffer_size: usize, TWriter>
-    Process for WriterProc< input_buffer_size,  TWriter>
+impl<'a, const INPUT_BUFFER_SIZE: usize, TWriter>
+    Process<'a> for WriterProc<INPUT_BUFFER_SIZE,  TWriter>
     where
         TWriter: Write + WriteReady,
 {
-    type TArgs<'args> = QueueNMut<'args, u8, input_buffer_size>;
-    fn resume<'args>(&mut self, mut inputs: Self::TArgs<'args>) {
+    type TArgs = QueueNMut<'a, u8, INPUT_BUFFER_SIZE>;
+    fn resume(&mut self, mut inputs: Self::TArgs) {
         let _initial_inputs_size = inputs.len();
         while let (Some(input), true) = (inputs.peek(), self.writer.write_ready().unwrap()){
             match self.writer.write(&[input.clone()]).unwrap(){

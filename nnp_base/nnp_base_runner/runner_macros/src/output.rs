@@ -60,12 +60,14 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
         .map(|proc| {
             let mut args = HashMap::<&NodeIndex, ProcArgMutability>::new();
             let mut args_order = Vec::<(&NodeIndex, ProcArgMutability)>::new();
-            for (proc_arg_index, proc_arg) in proc.args.iter().enumerate() {
-                let node_index =
-                    proc_arg
-                    .get_node_name()
-                    .used_in(|node_name| nodes.get_key_value(&node_name).unwrap().0
-                    );
+            for (_proc_arg_index, proc_arg) in proc.args.iter().enumerate() {
+                let node_index ={
+                    let node_name = proc_arg.get_node_name();
+                    let Some((node_index, _)) = nodes.get_key_value(&node_name) else {
+                        panic!("{node_name} is not a node that exists");
+                    };
+                    node_index
+                };
 
                 let proc_arg_mutability = &proc_arg.mutability;
 
@@ -354,7 +356,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
 
                 let proc_gen_cond = {
                     quote!{
-                        #proc_gen_name: for<'a> Process<TArgs<'a> = (#(#proc_gen_args),*)> 
+                        #proc_gen_name: for<'a> Process<'a, TArgs = (#(#proc_gen_args),*)> 
                     }
                 };
                 (ix, (proc_gen_name, proc_gen_cond))
@@ -419,6 +421,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
                         where #procs_generics_wheres_ts
                     {
                         type TRet = #proc_generic_arg;
+                        #[inline(always)]
                         fn get_ref(&self, key: &#proc_id_type) -> &Self::TRet{
                             &self.#proc_field
                         }
@@ -428,6 +431,7 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
                         OpensMut<#proc_id_type> for Procs<#procs_generics_args_ts>
                         where #procs_generics_wheres_ts
                     {
+                        #[inline(always)]
                         fn get_mut(&mut self, key: &#proc_id_type) -> &mut Self::TRet{
                             &mut self.#proc_field
                         }

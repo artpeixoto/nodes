@@ -19,11 +19,11 @@ pub struct LogWriter<TWrite: Write, const msg_queue_size: usize>{
 }
 
 
-impl<TWrite: Write, const MSG_QUEUE_SIZE: usize> 
-	Process for LogWriter<TWrite, MSG_QUEUE_SIZE>
+impl<'a, TWrite: Write, const MSG_QUEUE_SIZE: usize> 
+	Process<'a> for LogWriter<TWrite, MSG_QUEUE_SIZE>
 {
-	type TArgs<'args>  = LogQueueNMut<'args, MSG_QUEUE_SIZE>;
-    fn resume<'a>(&mut self, _msg_queue: Self::TArgs<'a>) 
+	type TArgs  = LogQueueNMut<'a, MSG_QUEUE_SIZE>;
+    fn resume(&mut self, _msg_queue: Self::TArgs) 
 	{
 		let can_take_string = {
 			if self.current_string.is_some() {
@@ -93,19 +93,19 @@ impl< TValue, TMsgMaker, const msg_queue_size: usize> Logger<TValue, TMsgMaker, 
 	}
 }
 
-impl<TValue, TMsgMaker, const msg_queue_size: usize>
-	Process for Logger< TValue, TMsgMaker, msg_queue_size>
+impl<'a, TValue, TMsgMaker, const MSG_QUEUE_SIZE: usize>
+	Process<'a> for Logger<TValue, TMsgMaker, MSG_QUEUE_SIZE>
 	where 
-	 	for<'a> TValue: 'a,
+	 	TValue: 'a,
 		TMsgMaker: FnMut(&TValue) -> String
 {
-	type TArgs<'args> = (
-		NodeRef<'args, TValue>,
-		ActivationSignalNRef<'args>,
-		LogQueueNMut<'args, msg_queue_size>
-	) ;
+	type TArgs = (
+		NodeRef<'a, TValue>,
+		ActivationSignalNRef<'a>,
+		LogQueueNMut<'a, MSG_QUEUE_SIZE>
+	);
 
-    fn resume<'a>(&mut self, (value, activation_signal, mut log_queue): Self::TArgs<'a> ) {
+    fn resume(&mut self, (value, activation_signal, mut log_queue): Self::TArgs ) {
 		if activation_signal.is_some() && log_queue.is_full().not(){
 			let new_message = (self.msg_maker)(&value);
 			log_queue.enqueue(new_message).unwrap();

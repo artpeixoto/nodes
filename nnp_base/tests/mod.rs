@@ -10,25 +10,25 @@ mod simple_test {
 
     struct CyclesCounter {}
 
-    impl Process for CyclesCounter {
-        type TArgs<'a> = NodeRefMut<'a, u64>;
-        fn resume<'a>(&mut self, mut args: Self::TArgs<'a>) {
+    impl<'a> Process<'a> for CyclesCounter {
+        type TArgs = NodeRefMut<'a, u64>;
+        fn resume(&mut self, mut args: Self::TArgs) {
             *args += 1_u64;
         }
     }
 
     struct CyclesCountLogger {}
 
-    impl Process for CyclesCountLogger {
-        type TArgs<'a> = NodeRef<'a, u64>;
-        fn resume<'a>(&mut self, args: Self::TArgs<'a>) {
-            if args.deref() % 10_000_000 == 0 {
+    impl<'a> Process<'a> for CyclesCountLogger {
+        type TArgs = NodeRef<'a, u64>;
+        fn resume(&mut self, args: Self::TArgs) {
+            if args.deref() % 1_000_000_000 == 0 {
                 println!("cycles count is {}", args.deref());
             }
         }
     }
 
-    trait FunnyTrait<'a, TProc> where TProc: Process<TArgs<'a> = NodeRef<'a, usize>> + 'a {}
+    trait FunnyTrait<'a, TProc> where TProc: Process<'a, TArgs = NodeRef<'a, usize>> + 'a {}
 
     struct FunnyRock<'a> {
         _phantom: PhantomData<&'a ()>,

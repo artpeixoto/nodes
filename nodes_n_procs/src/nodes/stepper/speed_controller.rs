@@ -42,7 +42,7 @@ impl StepperSpeed{
 
     }
 }
-impl TimedProcess for StepperSpeedController<'_> {
+impl TimedProcess<'a> for StepperSpeedController<'_> {
     fn next(&mut self, input: &Time) -> Result<(), NodeBorrowError>{
 		let stepper_parms 	= &self.stepper_driver.parms;
 		let mut status_node	= self.stepper_driver.status_node.try_borrow_mut()?;

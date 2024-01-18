@@ -26,16 +26,16 @@ pub mod unary_func{
         }
     }
 
-    impl<TInput, TOutput, TFunc>
-        Process for PureUnaryFunc<TInput, TOutput, TFunc>
+    impl<'a, TInput, TOutput, TFunc>
+        Process<'a> for PureUnaryFunc<TInput, TOutput, TFunc>
         where
-            for<'a> TInput: PartialEq + Clone + 'a,
-            for<'a> TOutput: 'a,
+            TInput: PartialEq + Clone + 'a,
+            TOutput: 'a,
             TFunc:  Fn(&TInput) -> TOutput
     {
-        type TArgs<'a> = (NodeRef<'a, TInput>, NodeRefMut<'a, TOutput>);
+        type TArgs = (NodeRef<'a, TInput>, NodeRefMut<'a, TOutput>);
 
-        fn resume<'a>(& mut self, (input, mut output_dest): Self::TArgs<'a>) {
+        fn resume(& mut self, (input, mut output_dest): Self::TArgs) {
             let should_update = match &self.input_cache {
                 None => true,
                 Some(cache_value) => input.deref() != cache_value
@@ -76,18 +76,18 @@ pub mod binary_func{
         }
     }
 
-    impl<TInput0, TInput1, TOutput, TFunc>
-        Process for PureBinaryFunc<TInput0, TInput1, TOutput, TFunc>
+    impl<'a, TInput0, TInput1, TOutput, TFunc>
+        Process<'a> for PureBinaryFunc<TInput0, TInput1, TOutput, TFunc>
         where
-            for<'a> TInput0: PartialEq + Clone + 'a,
-            for<'a> TInput1: PartialEq + Clone + 'a,
-            for<'a> TOutput:  'a,
+            TInput0: PartialEq + Clone + 'a,
+            TInput1: PartialEq + Clone + 'a,
+            TOutput:  'a,
             TFunc:   Fn(&TInput0, &TInput1) -> TOutput
     {
-        type TArgs<'a> =
+        type TArgs =
             (NodeRef<'a, TInput0>, NodeRef<'a, TInput1>, NodeRefMut<'a, TOutput> );
 
-        fn resume<'args>(&mut self, (input_0_ref, input_1_ref, mut output): Self::TArgs<'args> ) {
+        fn resume(&mut self, (input_0_ref, input_1_ref, mut output): Self::TArgs ) {
             let (input_0, input_1) = (input_0_ref.deref(), input_1_ref.deref());
             let should_update = match &self.input_cache{
                 None => true,
