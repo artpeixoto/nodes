@@ -9,7 +9,6 @@ pub use sample_history_saver::*;
  
 pub mod sample_timer;
 
-
 pub mod sample_latcher;
 pub use sample_latcher::*;
 pub mod sample_history;

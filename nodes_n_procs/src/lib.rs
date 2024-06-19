@@ -4,8 +4,10 @@
     impl_trait_in_fn_trait_return,
     impl_trait_in_assoc_type,
     error_in_core,
+    arbitrary_self_types,
+    inherent_associated_types,
 )]
-#![feature(inherent_associated_types)]
+#![cfg_attr(feature = "coroutines", feature(coroutines, coroutine_trait))]
 extern crate alloc;
 
 pub mod base{

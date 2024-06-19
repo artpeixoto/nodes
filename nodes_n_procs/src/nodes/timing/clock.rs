@@ -1,19 +1,19 @@
 use core::borrow::BorrowMut;
 use crate::base::core::node::*;
 use crate::base::core::proc::*;
-use crate::timing::{Duration, Time};
+use crate::timing::{Duration, Instant};
 
 
-pub type ClockNode = Node<Time>;
+pub type ClockNode = Node<Instant>;
 pub type ClockNMut<'a> = <ClockNode as TryDerefMut>::TMut<'a>;
 pub type ClockNRef<'a> = <ClockNode as TryDeref>::TRef<'a>;
 
 pub trait TimeGetter {
-    fn get_current_time(&mut self) -> Time;
+    fn get_current_time(&mut self) -> Instant;
 }
 
-impl<TSelf> TimeGetter for TSelf where TSelf: FnMut() -> Time{
-    fn get_current_time(&mut self) -> Time {
+impl<TSelf> TimeGetter for TSelf where TSelf: FnMut() -> Instant{
+    fn get_current_time(&mut self) -> Instant {
         (self)()
     }
 }
@@ -47,7 +47,7 @@ impl<'a, TTimeGetter: TimeGetter> Process<'a> for ClockProcess<TTimeGetter>
 
 
 pub struct DeltaTimeProcess {
-    previous_time_reading: Option<Time>,
+    previous_time_reading: Option<Instant>,
 }
 impl DeltaTimeProcess {
     pub fn new() -> Self{
@@ -59,7 +59,7 @@ impl<'a> Process<'a> for DeltaTimeProcess{
     type TArgs  = (ClockNRef<'a>, NodeRefMut<'a, Duration>);
 
     fn resume(&mut self, (clock_node, mut output): Self::TArgs) {
-        let current_time_reading : &Time = clock_node.deref();
+        let current_time_reading : &Instant = clock_node.deref();
         if let Some(previous_time_reading) = &self.previous_time_reading{
             *output = (current_time_reading - previous_time_reading).to_num();
         }

@@ -862,13 +862,18 @@ pub fn generate_runner_code(build_runner_input: BuildRunnerInput) -> TokenStream
                     pub fn run_next_proc(&mut self) -> bool{
                         #run_next_proc_defn_ts
                     }
+                    
                     pub fn run_forever(&mut self) -> !{
                         loop{self.run_once();}
                     }
-
-                    pub fn run_once(&mut self){
+             
+                    pub fn prepare_to_run_cycle(&mut self) {
                         self.current_cycle_state.clear();
                         self.add_initial_procs();
+                    }
+
+                    pub fn run_once(&mut self){
+                        self.prepare_to_run_cycle();
                         loop {
                             if !self.run_next_proc() { break; }
                         }

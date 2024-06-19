@@ -1,11 +1,11 @@
-use crate::timing::{Time, Duration};
+use crate::timing::{Instant, Duration};
 
 pub fn new_square_wave_generator (
         cycle_duration: f32,
         cycle_offset:   f32,
         amplitude:      f32,
         offset:         f32 
-    ) -> impl Fn(&Time) -> f32
+    ) -> impl Fn(&Instant) -> f32
 {
 	let func = {
         let cycle_duration:  Duration = Duration::from_num( cycle_duration  ) ;
@@ -14,7 +14,7 @@ pub fn new_square_wave_generator (
         let up_value 		    = amplitude + offset;
         let down_value 		= offset;
 
-        move |time: &Time| -> f32
+        move |time: &Instant| -> f32
         {
             let time_mod = ( cycle_offset.add_unsigned(time.clone())) % cycle_duration;
             let value = 
@@ -35,7 +35,7 @@ pub fn new_pwm_wave_generator (
         cycle_offset:   f32,
         amplitude:      f32,
         offset:         f32,
-    ) -> impl Fn(&f32, &Time) -> f32
+    ) -> impl Fn(&f32, &Instant) -> f32
 {
     let cycle_duration_us: 	Duration = Duration::from_num( cycle_duration ) ;
     let cycle_offset_us: 	Duration = Duration::from_num( cycle_offset    ) ;
@@ -43,7 +43,7 @@ pub fn new_pwm_wave_generator (
     let up_value 		= amplitude + offset;
     let down_value 		= offset;
 
-    move |current_val: &f32, time: &Time| -> f32 {
+    move |current_val: &f32, time: &Instant| -> f32 {
         let val_duration = (current_val * cycle_duration_us.to_num::<f32>()) as u64;
 
         let duration_since_cycle_start = ( cycle_offset_us.add_unsigned(time.clone())) % cycle_duration_us;

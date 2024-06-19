@@ -18,7 +18,7 @@ pub fn build_runner(ts: TokenStream1) -> TokenStream1{
 
     let runner_code = output::generate_runner_code(build_runner_input);
 
-    println!("{runner_code}");
+    //println!("{runner_code}");
 
     runner_code.into()
 }

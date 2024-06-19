@@ -1,18 +1,21 @@
-#![feature(corroutines, corroutine_trait)]
 use core::{ops::{Coroutine, DerefMut}, pin::{Pin, self}, marker::PhantomData};
 use crate::base::proc::Process;
-pub struct CoroutineWrapper<TCorr, TCorrDeref, TArgs> 
-	where TCorr: Coroutine<TArgs> , TCorrDeref: DerefMut<Target=TCorr>
+pub struct CoroutineProcess<TCorr, TCorrDeref, TArgs> 
+	where 
+		for<'a> TArgs:  'a,
+		TCorr: Coroutine<TArgs>,
+		TCorrDeref: DerefMut<Target=TCorr>
 {
 	coroutine: 	Pin<TCorrDeref>,
 	phantom: 	PhantomData<TArgs>
 }
 
 impl<TCorr, TCorrDeref, TArgs> 
-	CoroutineWrapper<TCorr, TCorrDeref, TArgs>
-	where 
-		TCorr		: Coroutine<TArgs> ,
-		TCorrDeref	: DerefMut<Target=TCorr>,
+CoroutineProcess<TCorr, TCorrDeref, TArgs>
+where 
+	for<'a> TArgs:  'a,
+	TCorr: Coroutine<TArgs>,
+	TCorrDeref	: DerefMut<Target=TCorr>,
 {
 	pub fn new(corr: Pin<TCorrDeref>) -> Self{
 		Self { 
@@ -23,11 +26,12 @@ impl<TCorr, TCorrDeref, TArgs>
 }
 
 
-impl<TCorr, TCorrDeref, TArgs> 
-	Process<'a> for CoroutineWrapper<TCorr, TCorrDeref, TArgs>
-	where 
-		TCorr: Coroutine<TArgs>,
-		TCorrDeref: DerefMut<Target=TCorr>, 
+impl<'process, TCorr, TCorrDeref, TArgs> 
+	Process<'process> for CoroutineProcess<TCorr, TCorrDeref, TArgs>
+where 
+	for<'a> TArgs: 'process + 'a   ,
+	for<'a> TCorr:  Coroutine<TArgs > + 'a + 'process,
+	TCorrDeref	: DerefMut<Target=TCorr> + 'process,
 {
     type TArgs = TArgs;
     fn resume(&mut self, args: Self::TArgs) {

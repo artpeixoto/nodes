@@ -147,7 +147,7 @@ impl ProcInput {
 
 impl Parse for ProcInput {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        println!("proc input is {:#?}", &input);
+        // println!("proc input is {:#?}", &input);
         let func  = Box::new(input.parse::<Ident>()?);
 
         let args_parenthesized;

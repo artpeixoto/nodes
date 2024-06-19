@@ -4,6 +4,7 @@ pub mod stepper;
 pub mod data_proc;
 pub mod timing;
 pub mod sampling;
+pub mod request;
 pub mod queue;
 pub mod signals;
 pub mod procs_wrappers;
